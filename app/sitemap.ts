@@ -4,7 +4,6 @@ import path from "node:path";
 
 import { founders } from "../lib/founders";
 import { getNativeBlogPosts } from "../lib/blog";
-import { dedicatedServicePages } from "../lib/service-pages";
 
 const SITE_URL = "https://www.articog.com";
 const REDIRECTED_ROUTES = new Set([
@@ -48,8 +47,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = collectStaticRoutes(path.join(process.cwd(), "app"));
   const founderRoutes = founders.map((founder) => `/about/founder/${founder.slug}`);
   const blogRoutes = getNativeBlogPosts().map((post) => `/blog/${post.slug}`);
-  const serviceRoutes = dedicatedServicePages.map((service) => `/services/${service.slug}`);
-  const routes = new Set([...staticRoutes, ...founderRoutes, ...blogRoutes, ...serviceRoutes]);
+  const routes = new Set([...staticRoutes, ...founderRoutes, ...blogRoutes]);
 
   return [...routes].sort().map((route) => ({
     url: `${SITE_URL}${route}`,
