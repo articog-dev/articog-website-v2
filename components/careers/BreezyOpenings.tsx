@@ -3,6 +3,8 @@ const roles = [
   "AI Visual Designer",
   "AI Filmmaker",
   "AI Video Editor & Generator",
+  "AI Engineer",
+  "Software Developer",
 ];
 
 export function BreezyOpenings() {
