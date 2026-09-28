@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 import { Link } from "@/components/ui/Link";
-import { Container, Section, Heading, Grid, Card, PageHero, MediaOverlay } from "@/components/ui";
+import { Container, Section, Heading, Card, PageHero, MediaOverlay } from "@/components/ui";
 import { ArrowRight, Grid2X2, Instagram, Layers3, Smartphone } from "lucide-react";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { topLevelServiceLinks } from "@/lib/service-navigation";
@@ -284,6 +284,53 @@ const organizedServices = topLevelServiceLinks.map((serviceLink, index) => {
   };
 });
 
+type OrganizedService = (typeof organizedServices)[number];
+
+function ServiceCard({ service, featured = false }: { service: OrganizedService; featured?: boolean }) {
+  return (
+    <Card className={`h-full gap-0 overflow-hidden border-white/[0.08] bg-white/[0.02] p-0 transition-[border-color,background-color] duration-300 hover:border-white/20 hover:bg-white/[0.035] ${featured ? "" : "md:min-h-[260px]"}`}>
+      {service.image ? (
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <Image
+            src={service.image.src}
+            alt={service.image.alt}
+            fill
+            sizes={featured ? "(max-width: 767px) 100vw, (max-width: 1279px) 33vw, 400px" : "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 300px"}
+            className="object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
+          />
+        </div>
+      ) : null}
+      <div className="flex flex-1 flex-col p-6 md:p-7">
+        <Heading as="h3" size="card" className="text-white">
+          {service.title}
+        </Heading>
+        <p className="mt-3 type-small leading-relaxed text-white/60">
+          {service.description}
+        </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          {service.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-white/[0.08] px-3 py-1 type-caption text-white/60"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <Link
+          href={service.href}
+          className="mt-auto inline-flex items-center justify-between gap-3 pt-8 type-small font-medium text-white transition-opacity hover:opacity-70"
+        >
+          <span>View service</span>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/[0.12] bg-white/[0.03]">
+            <ArrowRight size={15} aria-hidden="true" />
+          </span>
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
 export default function ServicesPage() {
   return (
     <>
@@ -291,93 +338,66 @@ export default function ServicesPage() {
         title="Creative services for campaign volume."
         media={
           <>
-          <LazyVideo
-            autoPlay
-            muted
-            playsInline
-            loop
-            controls={false}
-            preload="metadata"
-            poster="https://media.articog.com/images/services/hf_20260820_165439_f355b7b5-fc30-4852-9c69-cb8433145326.png"
-            className="h-full w-full object-contain"
-            aria-hidden="true"
-            sources={[
-              {
-                src: "https://media.articog.com/videos/backgrounds/web%201_1.mp4",
-                type: "video/mp4",
-                media: "(min-width: 769px)",
-              },
-              {
-                src: "https://media.articog.com/videos/backgrounds/web%201_1.mp4",
-                type: "video/mp4",
-              },
-            ]}
-          />
+            <LazyVideo
+              autoPlay
+              muted
+              playsInline
+              loop
+              controls={false}
+              preload="metadata"
+              poster="https://media.articog.com/images/services/hf_20260820_165439_f355b7b5-fc30-4852-9c69-cb8433145326.png"
+              className="h-full w-full object-cover"
+              aria-hidden="true"
+              sources={[
+                {
+                  src: "https://media.articog.com/videos/backgrounds/web%201_1.mp4",
+                  type: "video/mp4",
+                  media: "(min-width: 769px)",
+                },
+                {
+                  src: "https://media.articog.com/videos/backgrounds/web%201_1.mp4",
+                  type: "video/mp4",
+                },
+              ]}
+            />
+            <MediaOverlay
+              strength="soft"
+              className="bg-gradient-to-b from-black/55 via-black/10 to-transparent"
+            />
             <MediaOverlay strength="soft" />
           </>
         }
-        className="min-h-[28rem] text-center"
+        className="flex min-h-svh items-center justify-center text-center md:min-h-[52vh]"
       />
 
-      <Section className="border-t border-white/[0.05] pt-0 pb-20">
-        <Container>
-          <div className="mx-auto mb-10 max-w-3xl">
-            <Heading as="h2" size="section" className="text-white">Film, video, image and audio, produced faster with AI.</Heading>
+      <Section className="border-t border-white/[0.05] py-20 md:py-28">
+        <Container className="max-w-[1440px]">
+          <div className="mb-9 max-w-4xl md:mb-12">
+            <Heading as="h2" size="section" className="text-white">
+              Film, video, image and audio, produced faster with AI.
+            </Heading>
           </div>
-          <Grid variant="standard" columns="grid-cols-1 md:grid-cols-2">
-            {organizedServices.map((service) => (
-              <Card
-                key={service.title}
-                className="min-h-[320px] border-white/[0.08]"
-              >
-                {service.image ? (
-                  <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-xl">
-                    <Image
-                      src={service.image.src}
-                      alt={service.image.alt}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover"
-                    />
-                  </div>
-                ) : null}
-                <Heading as="h3" size="card" className="text-white">
-                  {service.title}
-                </Heading>
-                <p className="mt-4 type-small leading-relaxed text-white/60">
-                  {service.description}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {service.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-white/[0.08] px-3 py-1 type-caption text-white/60"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <Link
-                  href={service.href}
-                  className="mt-auto inline-flex items-center gap-2 pt-8 type-small font-medium text-white transition-opacity hover:opacity-70"
-                >
-                  View service
-                  <ArrowRight size={15} aria-hidden="true" />
-                </Link>
-              </Card>
+          <div className="grid gap-4 md:grid-cols-3 md:gap-5">
+            {organizedServices.filter((service) => service.image).map((service) => (
+              <ServiceCard key={service.title} service={service} featured />
             ))}
-          </Grid>
+          </div>
+          <div className="mt-4 grid gap-3 md:mt-5 md:grid-cols-2 md:gap-4 lg:grid-cols-4">
+            {organizedServices.filter((service) => !service.image).map((service) => (
+              <ServiceCard key={service.title} service={service} />
+            ))}
+          </div>
         </Container>
       </Section>
 
       {/* Service Deliverables */}
       <Section size="md" className="border-t border-white/[0.05]">
-        <Container>
-          <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-3">
+        <Container className="max-w-[1440px]">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {serviceDeliverables.map(({ title, description, Icon }, index) => (
               <div
                 key={title}
-                className={`rounded-xl border border-white/[0.08] p-6 ${index === serviceDeliverables.length - 1 ? "sm:col-span-3" : ""}`}
+                className={`min-h-full rounded-xl border border-white/[0.08] bg-white/[0.02] p-5 md:p-6 ${index === serviceDeliverables.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""}`}
               >
                 <Icon className="mb-5 h-6 w-6 text-white/70" aria-hidden="true" />
                 <Heading as="h2" size="card" className="mb-3 text-white">{title}</Heading>
