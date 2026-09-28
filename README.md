@@ -1,17 +1,17 @@
 # Articog Website — Version 2
 
-Official marketing website for **Articog**, an AI-native film and creative production company. This repository is **Version 2** of the site (Next.js). The earlier site, built on a previous stack, is preserved as **Version 1** in the `articog-dev/articog-website` repository and is no longer the active codebase.
+Official marketing website for **Articog**, an AI-native film and creative production company. This repository is **Version 2** of the site (Next.js). The earlier site, built on a previous stack, is preserved as **Version 1** in the `articog-dev/articog-website-v1` repository and is no longer the active codebase.
 
 - Production: https://www.articog.com
-- Repository: `articog-dev/articog-next.js-website` (Version 2)
+- Repository: `articog-dev/articog-website-v2` (Version 2)
 - Documentation: [Technical documentation](docs/TECHNICAL_DOCUMENTATION.md) · [Site map](docs/SITE_MAP.md)
 
 ## Version history
 
 | Version | Repository | Status |
 | --- | --- | --- |
-| Version 1 | `articog-dev/articog-website` | Legacy, archived reference |
-| Version 2 | `articog-dev/articog-next.js-website` | Current, actively developed |
+| Version 1 | `articog-dev/articog-website-v1` | Legacy, archived reference |
+| Version 2 | `articog-dev/articog-website-v2` | Current, actively developed |
 
 ## Tech stack
 
