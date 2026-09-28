@@ -1,28 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Articog Website — Version 2
 
-## Getting Started
+Official marketing website for **Articog**, an AI-native film and creative production company. This repository is **Version 2** of the site (Next.js). The earlier site, built on a previous stack, is preserved as **Version 1** in the `articog-dev/articog-website` repository and is no longer the active codebase.
 
-First, run the development server:
+- Production: https://www.articog.com
+- Repository: `articog-dev/articog-next.js-website` (Version 2)
+- Documentation: [Technical documentation](docs/TECHNICAL_DOCUMENTATION.md) · [Site map](docs/SITE_MAP.md)
+
+## Version history
+
+| Version | Repository | Status |
+| --- | --- | --- |
+| Version 1 | `articog-dev/articog-website` | Legacy, archived reference |
+| Version 2 | `articog-dev/articog-next.js-website` | Current, actively developed |
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js 16.3 (App Router), React 19.2 |
+| Language | TypeScript 5 (strict mode) |
+| Styling | Tailwind CSS 4 (`@tailwindcss/postcss`), `tw-animate-css`, CSS design tokens in `app/globals.css` |
+| UI primitives | Radix UI (accordion, checkbox, label, select, slot), `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react` icons |
+| Animation | GSAP 3, custom `FadeIn` / `SlideUp` / `ScrollReveal` components |
+| Notifications | Sonner (toasts) |
+| Fonts | Sora via `next/font/google` |
+| Backend (API routes) | Next.js Route Handlers (`app/api/*`), Node runtime |
+| Data / rate limiting | Upstash Redis (`@upstash/redis`) and `@upstash/ratelimit` |
+| Email | Resend (REST API) |
+| Lead mirror | Google Sheets (Apps Script web app URL) |
+| Scheduling | Calendly popup widget on `/book-a-demo` |
+| Careers | Static role list (`components/careers/BreezyOpenings.tsx`) with email applications |
+| Newsletter | Beehiiv embedded form |
+| Analytics | Google Analytics 4 (`NEXT_PUBLIC_GA_MEASUREMENT_ID`) |
+| Unit / integration tests | Vitest 2 |
+| End-to-end tests | Playwright |
+| Lint | ESLint 9 with `eslint-config-next` |
+| CI | GitHub Actions (`.github/workflows/ci.yml`, Node 20) |
+| Hosting | Vercel (runtime logs are the observability target); media served from `media.articog.com` |
+
+## Getting started
+
+Requirements: Node.js 20+ and npm.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Production build |
+| `npm start` | Serve the production build |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest unit and integration tests |
+| `npm run test:e2e` | Playwright end-to-end tests |
+| `npm run optimize:images` | Run `scripts/optimize-images.mjs` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/            Routes (App Router pages, API route handlers, sitemap.ts, robots.ts, globals.css)
+components/     ui/ (design-system primitives), sections/ (page sections), layout/ (header, footer,
+                menus), blog/, careers/, search/, seo/, animations/, newsletter/, analytics/
+lib/            Content data, validation, rate limiting, idempotency, lead storage, email, logging
+hooks/          React hooks
+types/          Shared TypeScript types
+public/         Static assets, manifest, robots.txt, llms.txt, search-index.json, posters, videos
+scripts/        Build-time utilities
+tests/          Vitest suites
+e2e/            Playwright specs
+docs/           Technical documentation and site map
+```
 
-## Learn More
+## Key conventions
 
-To learn more about Next.js, take a look at the following resources:
+- **Page hero spacing.** Page titles use the shared `PageHero` / `PageHeroDetail` components and the spacing tokens `--header-offset` and `--spacing-title-gap` so every page has the same space above and below the H1. Do not add one-off spacing around page titles.
+- **Design tokens** live in `app/globals.css` (`--spacing-*`, `--gap-*`, colors). Prefer tokens over hard-coded values.
+- **Content data** for services, founders, and blog posts lives in `lib/` (`service-pages.ts`, `founders.ts`, `blog.ts`).
+- **Careers roles** are a plain string array in `components/careers/BreezyOpenings.tsx`.
+- **Redirects** for retired URLs are defined in `next.config.ts`.
+
+## Documentation
+
+- [docs/TECHNICAL_DOCUMENTATION.md](docs/TECHNICAL_DOCUMENTATION.md): architecture, routing, data flow, API, security, testing, deployment.
+- [docs/SITE_MAP.md](docs/SITE_MAP.md): every page and route of Version 2.
 
 ## Contact form configuration
 
@@ -82,10 +144,3 @@ No Bing verification value, IndexNow key, or IndexNow integration is configured 
 Bing verification, sitemap submission, URL inspection, and any IndexNow key hosting or submission remain manual production-account tasks.
 
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
