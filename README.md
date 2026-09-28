@@ -5,6 +5,8 @@ Official marketing website for **Articog**, an AI-native film and creative produ
 - Production: https://www.articog.com
 - Repository: `articog-dev/articog-website-v2` (Version 2)
 - Documentation: [Technical documentation](docs/TECHNICAL_DOCUMENTATION.md) · [Site map](docs/SITE_MAP.md)
+- Google Sheet: [Articog Google Sheet](https://docs.google.com/spreadsheets/d/1FqK6pxYtBzuWUDBLrON_0IZSQoKrViYTCGbT4rFfhSg/edit?gid=0#gid=0)
+- Calendly (demo booking): https://calendly.com/articog-media/30min
 
 ## Version history
 
