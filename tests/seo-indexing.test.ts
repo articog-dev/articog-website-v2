@@ -5,50 +5,40 @@ import path from "node:path";
 import sitemap from "../app/sitemap";
 
 describe("technical SEO and indexing", () => {
-  it("excludes noindex and utility routes from the XML sitemap", () => {
-    const sitemapSource = readFileSync(path.join(process.cwd(), "app", "sitemap.ts"), "utf8");
-
-    expect(sitemapSource).toContain('const EXCLUDED_ROUTES = new Set(["/thank-you", "/thank-you/demo", "/sitemap"]);');
-    expect(sitemapSource).toContain('entry.name === "api"');
-  });
-
-  it("emits unique production URLs for indexable founder profiles", () => {
-    const entries = sitemap();
-    const urls = entries.map((entry) => entry.url);
-
-    expect(new Set(urls).size).toBe(urls.length);
-    expect(urls.every((url) => url.startsWith("https://www.articog.com/"))).toBe(true);
-    expect(urls).toContain("https://www.articog.com/about/founder/sai-teja-inampudi");
-    expect(urls).toContain("https://www.articog.com/about/founder/dr-harika-govada");
-    expect(urls).not.toContain("https://www.articog.com/thank-you");
-    expect(urls).not.toContain("https://www.articog.com/thank-you/demo");
-    expect(urls).not.toContain("https://www.articog.com/sitemap");
-  });
-
-  it("includes the six client-confirmed indexable pages in the XML sitemap", () => {
+  it("emits exactly the six approved URLs without duplicates or unwanted routes", () => {
     const urls = sitemap().map((entry) => entry.url);
     const expectedUrls = [
       "https://www.articog.com/book-a-demo",
-      "https://www.articog.com/work",
+      "https://www.articog.com/contact",
+      "https://www.articog.com/industries",
       "https://www.articog.com/services",
       "https://www.articog.com/solutions/enterprise",
-      "https://www.articog.com/industries",
-      "https://www.articog.com/contact",
+      "https://www.articog.com/work",
     ];
-
-    for (const url of expectedUrls) {
-      expect(urls).toContain(url);
-    }
 
     const excludedUrls = [
+      "https://www.articog.com/about",
+      "https://www.articog.com/blog",
+      "https://www.articog.com/careers",
+      "https://www.articog.com/compare/vs-ai-tools",
+      "https://www.articog.com/copyright",
+      "https://www.articog.com/founder-leadership",
+      "https://www.articog.com/help",
+      "https://www.articog.com/how-it-works/ai-creative-pipeline",
+      "https://www.articog.com/legal/accessibility",
+      "https://www.articog.com/privacy-policy",
+      "https://www.articog.com/services/brand-films",
+      "https://www.articog.com/services/ad-creative",
+      "https://www.articog.com/solutions/performance-marketing",
       "https://www.articog.com/thank-you",
       "https://www.articog.com/thank-you/demo",
-      "https://www.articog.com/how-it-works",
-      "https://www.articog.com/trust",
-      "https://www.articog.com/work/industries",
-      "https://www.articog.com/services/brand-films",
+      "https://www.articog.com/trust/ai-and-ip",
+      "https://www.articog.com/why-articog",
+      "https://www.articog.com/work/video-ads",
     ];
 
+    expect(urls).toEqual(expectedUrls);
+    expect(new Set(urls).size).toBe(urls.length);
     for (const url of excludedUrls) {
       expect(urls).not.toContain(url);
     }
