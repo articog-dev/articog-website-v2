@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "AI & Intellectual Property | Articog",
   description: "How Articog handles AI tool use, ownership, and client intellectual property.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { ShieldCheck, Scale, FileText, UserCheck, Eye, AlertCircle } from "lucide-react";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
@@ -56,19 +56,19 @@ export default function AIIPPage() {
   return (
     <div className="bg-black min-h-screen">
       {/* Hero Section */}
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Trust", href: "/why-articog#trust" }, { label: "AI & Intellectual Property" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               AI & Intellectual Property
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
       {/* Policies Section */}
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {policies.map((policy) => (

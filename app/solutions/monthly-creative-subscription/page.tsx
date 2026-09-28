@@ -38,7 +38,7 @@ export default function MonthlySubscriptionPage() {
       />
 
       {/* How It Works Section */}
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="mb-[var(--gap-header-to-content)]">
             <Heading as="h2" size="section" className="text-white">How It Works</Heading>

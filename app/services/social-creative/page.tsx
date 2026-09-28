@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Social Creative Production | Articog",
   description: "Social creative for organic and paid campaigns, designed for brand consistency and fast iteration across platforms.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { CheckCircle2 } from "lucide-react";
 import { ServiceDetails } from "@/components/sections/ServiceDetails";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -15,17 +15,17 @@ import { ServiceDeviceShowcase } from "@/components/sections/ServiceDeviceShowca
 export default function SocialCreativePage() {
   return (
     <>
-      <Section size="lg" className="pt-32 md:pt-40 pb-20">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: "Social Creative" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Monthly social content, produced faster.
             </Heading>
           </div>
           <ServiceDeviceShowcase href="/services/social-creative" />
         </Container>
-      </Section>
+      </PageHero>
 
       <Section size="md" className="border-t border-white/5">
         <Container>

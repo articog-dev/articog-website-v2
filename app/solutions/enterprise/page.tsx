@@ -46,7 +46,7 @@ export default function EnterpriseSolutionPage() {
         title="AI-native production for high-volume brand teams."
       />
 
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="mb-[var(--gap-header-to-content)]">
             <Heading as="h2" size="section" className="text-center text-white">What's Included</Heading>

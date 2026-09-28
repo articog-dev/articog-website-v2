@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Post-Production | Articog",
   description: "Post-production for video, motion, sound, and finishing, helping brands polish creative for launch and performance.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { Link } from "@/components/ui/Link";
 import { Scissors, Layers, Palette, Volume2, Sparkles, Info, ArrowRight } from "lucide-react";
 import { ServiceDetails } from "@/components/sections/ServiceDetails";
@@ -56,18 +56,18 @@ export default function PostProductionPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: "Post-Production" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Final polish, ready for every channel.
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="mb-12">
             <Heading as="h2" size="section" className="mb-4 text-center text-white">What We Deliver</Heading>

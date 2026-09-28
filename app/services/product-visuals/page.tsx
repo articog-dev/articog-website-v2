@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Product Visual Content | Articog",
   description: "Product visual content for e-commerce, launch campaigns, and performance marketing created with speed and brand precision.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { CheckCircle2 } from "lucide-react";
 import { ServiceDetails } from "@/components/sections/ServiceDetails";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -14,18 +14,18 @@ import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 export default function ProductVisualsPage() {
   return (
     <>
-      <Section size="lg" className="pt-32 md:pt-40 pb-20">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: "Product Visual Content" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Every product, without a new shoot every time.
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
-      <Section size="md" className="border-t border-white/5">
+      <Section size="md" className="border-t border-white/5 pt-0">
         <Container>
           <div className="grid md:grid-cols-2 gap-12">
             <div>

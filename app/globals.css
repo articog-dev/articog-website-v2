@@ -3,23 +3,6 @@
 @source "../app";
 @import "tw-animate-css";
 
-[data-spacing-hero="true"] {
-  padding-top: calc(var(--header-offset) + var(--spacing-title-gap)) !important;
-  padding-bottom: 0 !important;
-}
-
-[data-spacing-hero="true"] h1 {
-  margin-bottom: 0 !important;
-}
-
-[data-spacing-hero="true"] h1 + p {
-  margin-top: var(--gap-heading-to-text) !important;
-}
-
-[data-spacing-hero="true"] .mb-16 {
-  margin-bottom: var(--spacing-title-gap) !important;
-}
-
 :root {
   --font-primary: var(--font-sora);
   --brand-accent: #ffffff;

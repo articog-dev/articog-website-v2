@@ -5,22 +5,22 @@ export const metadata: Metadata = {
   title: "California Privacy Notice | Articog",
   description: "Supplemental privacy notice for California residents under CCPA/CPRA.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 
 const LAST_UPDATED = "September 15, 2026";
 
 export default function CaliforniaPrivacyPage() {
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <div className="mx-auto max-w-3xl">
-            <Heading as="h1" size="hero" className="mb-6">
-              California Privacy Notice
-            </Heading>
-            <p className="mb-12 type-label uppercase tracking-widest text-white/30">
-              Last updated: {LAST_UPDATED}
-            </p>
+            <div className="mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero">California Privacy Notice</Heading>
+              <p className="mt-[var(--gap-heading-to-text)] type-label uppercase tracking-widest text-white/30">
+                Last updated: {LAST_UPDATED}
+              </p>
+            </div>
 
             <div className="space-y-12">
               <section>
@@ -80,7 +80,7 @@ export default function CaliforniaPrivacyPage() {
             </div>
           </div>
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

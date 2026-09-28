@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Heading } from "@/components/ui";
+import { Heading, PageHero } from "@/components/ui";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -433,15 +433,15 @@ const sections: PolicySection[] = [
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-black text-white">
-      <section className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="mx-auto w-full max-w-[1060px]">
-            <header className="mb-14 md:mb-20">
-              <Heading as="h1" size="hero" className="mb-6">
+            <header className="mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero">
                 Privacy Policy
               </Heading>
 
-              <dl className="mt-10 grid gap-8 border-t border-white/[0.08] pt-8 sm:grid-cols-2 sm:gap-16">
+              <dl className="mt-[var(--gap-heading-to-text)] grid gap-8 border-t border-white/[0.08] pt-8 sm:grid-cols-2 sm:gap-16">
                 <div className="min-w-0">
                   <dt className="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-safe">
                     Effective Date
@@ -631,7 +631,7 @@ export default function PrivacyPolicyPage() {
             </div>
           </div>
         </div>
-      </section>
+      </PageHero>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, Heading, Section } from "@/components/ui";
+import { Container, Heading, PageHero, Section } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Copyright Policy | Articog",
@@ -10,13 +10,15 @@ export const metadata: Metadata = {
 export default function CopyrightPage() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <div className="mx-auto max-w-3xl">
-            <Heading as="h1" size="hero" className="mb-6 text-white">Copyright / DMCA</Heading>
-            <p className="type-h3 mb-12 max-w-2xl leading-relaxed text-white/60">
-              Articog respects the intellectual property rights of others and expects its users to do the same.
-            </p>
+            <div className="mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero" className="text-white">Copyright / DMCA</Heading>
+              <p className="mt-[var(--gap-heading-to-text)] type-h3 max-w-2xl leading-relaxed text-white/60">
+                Articog respects the intellectual property rights of others and expects its users to do the same.
+              </p>
+            </div>
 
             <Section className="border-t border-white/[0.08] py-12">
               <div className="prose prose-invert max-w-none space-y-8">
@@ -50,7 +52,7 @@ export default function CopyrightPage() {
             </Section>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
     </div>
   );

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Platform-native content built for organic and paid social.",
   alternates: { canonical: "https://www.articog.com/work/social" },
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Instagram, Smartphone, Grid, Info } from "lucide-react";
 import { YouTubeEmbed } from "@/components/blog/YouTubeEmbed";
@@ -32,18 +32,18 @@ export default function SocialWorkPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Work", href: "/work" }, { label: "Social Creative Work" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Social Creative Work
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="mb-12 max-w-3xl">
             <h2 className="type-h2 mb-4 text-white">A real example</h2>

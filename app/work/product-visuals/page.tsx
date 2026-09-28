@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "On-brand product visuals at scale. Product photography, campaign posters, and print-ready assets delivered in days.",
   alternates: { canonical: "https://www.articog.com/work/product-visuals" },
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 
@@ -13,19 +13,19 @@ export default function ProductVisualsPage() {
   return (
     <div className="bg-black min-h-screen">
       {/* Hero Section */}
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Work", href: "/work" }, { label: "Product Visuals Work" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Product Visual Content
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
       {/* Case Study Section */}
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="max-w-3xl">
             <div className="space-y-8">

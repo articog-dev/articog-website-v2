@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 import { Link } from "@/components/ui/Link";
 import { hasGlobalPrivacyControl, readCookieConsent, saveCookieConsent } from "@/lib/cookie-consent";
 
@@ -34,12 +34,12 @@ export default function PrivacyChoicesPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <div className="mx-auto max-w-3xl">
-            <Heading as="h1" size="hero" className="mb-6">
-              Your Privacy Choices
-            </Heading>
+            <div className="mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero">Your Privacy Choices</Heading>
+            </div>
 
             <div className="space-y-12 type-small leading-relaxed text-white/60">
               {showBanner ? (
@@ -133,7 +133,7 @@ export default function PrivacyChoicesPage() {
             </div>
           </div>
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

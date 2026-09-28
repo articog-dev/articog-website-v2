@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Link } from "@/components/ui/Link";
-import { Container, Section, Button, Heading, Input, Textarea, Alert, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
+import { Container, Button, Heading, PageHero, Input, Textarea, Alert, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { trackContactSubmit, trackFormError, trackFormSubmit, trackFormSuccess } from "@/lib/analytics";
 import { buildContactPayload } from "@/lib/contact-payload";
 import {
@@ -68,15 +68,12 @@ export default function ContactPage() {
   };
 
   return (
-    <Section
-      size="lg"
-      className="pt-32 md:pt-40 bg-black min-h-screen"
-    >
+    <PageHero contentOnly className="bg-black min-h-screen">
       <Container>
         <div className="mx-auto max-w-3xl">
           {/* Header */}
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Build your next brand story with Articog.
             </Heading>
           </div>
@@ -297,6 +294,6 @@ export default function ContactPage() {
           </div>
         </div>
       </Container>
-    </Section>
+    </PageHero>
   );
 }

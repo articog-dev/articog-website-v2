@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.articog.com/work" },
 };
 import { ArrowRight } from "lucide-react";
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 import { Link } from "@/components/ui/Link";
 import { CreativeDocument } from "./CreativeDocument";
 import { WorkVideoShowcase } from "@/components/sections/WorkVideoShowcase";
@@ -34,10 +34,10 @@ export default function WorkPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40 pb-16">
+      <PageHero contentOnly>
         <Container>
-          <div className="mx-auto max-w-3xl text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="mx-auto max-w-3xl text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Brand stories and product creative produced with Articog.
             </Heading>
           </div>
@@ -63,7 +63,7 @@ export default function WorkPage() {
 
           <FinalCTA content={{ ctaHref: "/book-a-demo", ctaLabel: "Book a Demo" }} />
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

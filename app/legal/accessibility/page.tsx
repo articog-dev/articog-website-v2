@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Accessibility Statement | Articog",
   description: "Articog's accessibility statement, detailing our commitment to an inclusive digital experience.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 
 export default function AccessibilityPage() {
   const sections = [
@@ -28,18 +28,15 @@ export default function AccessibilityPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <div className="mx-auto max-w-3xl mb-24">
-            <Heading as="h1" size="hero" className="mb-4">
-              Accessibility Statement
-            </Heading>
-            <p
-              className="type-small mb-16"
-              style={{ color: "rgba(255,255,255,0.40)" }}
-            >
-              Last updated: August 19, 2026
-            </p>
+            <div className="mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero">Accessibility Statement</Heading>
+              <p className="mt-[var(--gap-heading-to-text)] type-small" style={{ color: "rgba(255,255,255,0.40)" }}>
+                Last updated: August 19, 2026
+              </p>
+            </div>
 
             <div className="space-y-12">
               {sections.map((section) => (
@@ -58,7 +55,7 @@ export default function AccessibilityPage() {
             </div>
           </div>
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

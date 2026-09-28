@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Explore how our AI-native production pipeline moves from brief to generation, review, refinement, and final delivery.",
   alternates: { canonical: "https://www.articog.com/how-it-works/ai-creative-pipeline" },
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Link } from "@/components/ui/Link";
 import { ClipboardList, Cpu, UserCheck, RefreshCw, ShieldCheck, Type, FileSearch, HardDrive, Info } from "lucide-react";
@@ -47,17 +47,17 @@ export default function AICreativePipelinePage() {
   return (
     <div className="bg-black min-h-screen">
       {/* Hero Section */}
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "How It Works", href: "/why-articog#how-it-works" }, { label: "The AI Creative Pipeline" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               The AI Creative Pipeline
             </Heading>
           </div>
           <ServiceDeviceShowcase href="/how-it-works/ai-creative-pipeline" />
         </Container>
-      </Section>
+      </PageHero>
 
       {/* Pipeline Stages Section */}
       <Section size="md" className="bg-white/[0.02]">

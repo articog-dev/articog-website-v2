@@ -13,10 +13,10 @@ export default function CareersPage() {
   return (
     <div className="bg-black min-h-screen">
       <PageHero title="Join the future of production" compact />
-      <Section className="pt-8 sm:pt-12">
+      <Section className="pt-0">
         <Container>
 
-          <div className="mx-auto mb-24 mt-4 max-w-4xl">
+          <div className="mx-auto mb-24 max-w-4xl">
             <Heading as="h2" size="section" className="mb-5 text-[clamp(2rem,1.8vw,2.8rem)] leading-[1.08] tracking-[-0.05em] text-white">Open Roles</Heading>
 
             <BreezyOpenings />

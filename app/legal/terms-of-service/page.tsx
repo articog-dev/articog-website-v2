@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Terms of Service | Articog",
   description: "The terms and conditions governing your use of Articog's website and services.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 
 export default function TermsOfServicePage() {
   const sections = [
@@ -48,15 +48,15 @@ export default function TermsOfServicePage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <div className="mx-auto max-w-3xl mb-24">
-            <Heading as="h1" size="hero" className="mb-4">
-              Terms of Service
-            </Heading>
-            <p className="type-small mb-16 text-white/40">
-              Last updated: August 19, 2026
-            </p>
+            <div className="mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero">Terms of Service</Heading>
+              <p className="mt-[var(--gap-heading-to-text)] type-small text-white/40">
+                Last updated: August 19, 2026
+              </p>
+            </div>
 
             <div className="space-y-12">
               {sections.map((section) => (
@@ -72,7 +72,7 @@ export default function TermsOfServicePage() {
             </div>
           </div>
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

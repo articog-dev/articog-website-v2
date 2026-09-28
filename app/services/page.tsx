@@ -319,7 +319,7 @@ export default function ServicesPage() {
         className="min-h-[28rem] text-center"
       />
 
-      <Section className="border-t border-white/[0.05] py-20">
+      <Section className="border-t border-white/[0.05] pt-0 pb-20">
         <Container>
           <div className="mx-auto mb-10 max-w-3xl">
             <Heading as="h2" size="section" className="text-white">Film, video, image and audio, produced faster with AI.</Heading>

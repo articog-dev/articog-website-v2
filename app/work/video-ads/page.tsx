@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "High-volume video ads for every platform, developed for structured creative testing.",
   alternates: { canonical: "https://www.articog.com/work/video-ads" },
 };
-import { Container, Heading, Section } from '@/components/ui';
+import { Container, Heading, PageHero, Section } from '@/components/ui';
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { YouTubeEmbed } from "@/components/blog/YouTubeEmbed";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
@@ -22,16 +22,16 @@ export default function VideoAdsGalleryPage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans">
-      <div className="flex-grow pt-32 md:pt-40 pb-20">
+      <PageHero contentOnly className="flex-grow pb-20">
         <Container>
           <div className="max-w-6xl mx-auto">
             <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Work", href: "/work" }, { label: "Video Ad Gallery" }]} />
-            <div className="text-center mb-16">
-              <Heading as="h1" size="hero" className="mb-6 text-white">Video Ad Gallery</Heading>
+            <div className="text-center mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero" className="text-white">Video Ad Gallery</Heading>
+              <p className="mt-[var(--gap-heading-to-text)] max-w-2xl type-h3 leading-relaxed text-white/60">
+                Explore our latest AI generated video creative across industries and formats.
+              </p>
             </div>
-            <p className="type-h3 mb-16 max-w-2xl leading-relaxed text-white/60">
-              Explore our latest AI generated video creative across industries and formats.
-            </p>
 
             <div className="mb-16 max-w-3xl">
               <YouTubeEmbed
@@ -64,7 +64,7 @@ export default function VideoAdsGalleryPage() {
             </Section>
           </div>
         </Container>
-      </div>
+      </PageHero>
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default function AboutPage() {
         subtitle="Articog is an AI Native Film &amp; Production Company helping brands create stories for every product with faster AI-native production and lower production overhead."
       />
 
-      <Section size="md" className="border-t border-white/[0.05]">
+      <Section size="md" className="border-t border-white/[0.05] pt-0">
         <Container>
           <div className="mx-auto grid max-w-6xl gap-x-12 gap-y-8 lg:grid-cols-[0.9fr_1.8fr] lg:items-start">
             <div className="space-y-4 lg:pt-[0.25rem]">

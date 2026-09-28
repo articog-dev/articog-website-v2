@@ -69,7 +69,6 @@ export default function WhyArticogPage() {
         breadcrumbs={<Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Why Articog" }]} />}
         title={<><span className="block">More output.</span><span className="block">Less production cost.</span><span className="block">Faster production.</span></>}
         subtitle="Articog uses AI-native production to reduce traditional shoots, production time and budget, helping brands create more content around every product without losing the story or brand direction."
-        className="pb-[var(--spacing-section-sm)]"
         titleClassName="!text-[clamp(2.5rem,6vw,4.5rem)] text-balance"
       />
 

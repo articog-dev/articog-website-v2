@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Rights, Licensing & Ownership | Articog",
   description: "Commercial usage rights for AI, stock, music, and voice.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Link } from "@/components/ui/Link";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
@@ -34,19 +34,19 @@ export default function RightsLicensingPage() {
   return (
     <div className="bg-black min-h-screen">
       {/* Hero Section */}
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Trust", href: "/why-articog#trust" }, { label: "Rights, Licensing & Ownership" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Rights, Licensing & Ownership
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
       {/* Rights Sections */}
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {sections.map((section) => (

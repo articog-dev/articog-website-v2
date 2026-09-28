@@ -48,7 +48,7 @@ export default function ProductLaunchSolutionPage() {
         title="Every product needs a story. Build it once, scale it everywhere."
       />
 
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="mb-[var(--gap-header-to-content)]">
             <Heading as="h2" size="section" className="text-center text-white">How It Works</Heading>

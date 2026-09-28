@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Data Handling & Retention | Articog",
   description: "Learn how Articog manages, stores, and protects client data throughout the creative production process.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { Database, Shield, Trash2, HardDrive, RefreshCw, FileText } from "lucide-react";
@@ -46,14 +46,14 @@ export default function DataHandlingPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Trust", href: "/why-articog#trust" }, { label: "Data Handling & Retention" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Data Handling & Retention
             </Heading>
-            <p className="mx-auto max-w-2xl type-body md:text-lg leading-relaxed mb-12" style={{ color: "rgba(255,255,255,0.65)" }}>
+            <p className="mx-auto mt-[var(--gap-heading-to-text)] max-w-2xl type-body md:text-lg leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
               How we manage, store, and protect your brand's data and creative materials throughout our partnership.
             </p>
           </div>
@@ -83,7 +83,7 @@ export default function DataHandlingPage() {
 
           <FinalCTA content={{ ctaHref: "/book-a-demo", ctaLabel: "Book a Demo" }} />
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

@@ -41,7 +41,7 @@ export function PageHeroDetail({
               {backLink.label}
             </Link>
           ) : null}
-          <div className="mx-auto max-w-3xl text-center">
+          <div className={cn("mx-auto max-w-3xl text-center", !detail && "mb-[var(--spacing-title-gap)]")}>
             <Heading as="h1" size="hero" className="text-white">
               {title}
             </Heading>

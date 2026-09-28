@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: "A factual overview of Articog's approach to AI, rights, data handling, and project security.",
 };
 import { ArrowRight } from "lucide-react";
-import { Container, Section, Button, Heading, Card, CardContent } from "@/components/ui";
+import { Container, Button, Heading, PageHero, Card, CardContent } from "@/components/ui";
 import { Link } from "@/components/ui/Link";
 
 export default function TrustPage() {
@@ -31,10 +31,10 @@ export default function TrustPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
-          <div className="mx-auto max-w-3xl text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="mx-auto max-w-3xl text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Built on trust and transparency
             </Heading>
           </div>
@@ -72,7 +72,7 @@ export default function TrustPage() {
             </Button>
           </div>
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

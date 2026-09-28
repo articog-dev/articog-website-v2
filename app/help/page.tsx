@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Section, Button, Heading } from "@/components/ui";
+import { Container, Button, Heading, PageHero } from "@/components/ui";
 import { Link } from "@/components/ui/Link";
 import { useId, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -119,11 +119,11 @@ export default function HelpCenterPage() {
   return (
     <div className="bg-black min-h-screen">
       <JsonLd data={faqSchema} />
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
-          <div className="mx-auto max-w-3xl text-center mb-16">
+          <div className="mx-auto max-w-3xl text-center mb-[var(--spacing-title-gap)]">
             <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Help Center" }]} />
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+            <Heading as="h1" size="hero" className="text-white">
               Help Center
             </Heading>
             
@@ -186,7 +186,7 @@ export default function HelpCenterPage() {
             </Button>
           </div>
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

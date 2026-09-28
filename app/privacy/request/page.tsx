@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "@/components/ui/Link";
-import { Button, Container, Heading, Input, Textarea, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
+import { Button, Container, Heading, Input, Textarea, Label, PageHero, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -47,13 +47,15 @@ export default function PrivacyRequestPage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans">
-      <div className="flex-grow pt-32 md:pt-40 pb-20 px-4">
+      <PageHero contentOnly className="flex-grow pb-20 px-4">
         <Container>
         <div className="mx-auto max-w-2xl">
-          <Heading as="h1" size="hero" className="mb-6 text-white">Data Rights Request</Heading>
-          <p className="type-body-lg mb-10 text-white/60">
-            Submit a request to know, delete, or correct your personal information.
-          </p>
+          <div className="mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">Data Rights Request</Heading>
+            <p className="mt-[var(--gap-heading-to-text)] type-body-lg text-white/60">
+              Submit a request to know, delete, or correct your personal information.
+            </p>
+          </div>
 
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-8 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-8">
             <div className="space-y-2">
@@ -135,7 +137,7 @@ export default function PrivacyRequestPage() {
           </div>
         </div>
         </Container>
-      </div>
+      </PageHero>
 
     </div>
   );

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Link } from "@/components/ui/Link";
-import { Container, Heading } from '@/components/ui';
+import { Container, Heading, PageHero } from '@/components/ui';
 
 export const metadata: Metadata = {
   title: "Sitemap | Articog",
@@ -95,10 +95,12 @@ export default function SitemapPage() {
   ];
 
   return (
-    <div className="flex-grow pt-32 md:pt-40 pb-20">
+    <PageHero contentOnly className="flex-grow pb-20">
       <Container>
         <div className="max-w-4xl">
-          <Heading as="h1" size="hero" className="mb-6 text-white">Sitemap</Heading>
+          <div className="mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">Sitemap</Heading>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
             {sitemapData.map((section) => (
@@ -123,6 +125,6 @@ export default function SitemapPage() {
           </div>
         </div>
       </Container>
-    </div>
+    </PageHero>
   );
 }

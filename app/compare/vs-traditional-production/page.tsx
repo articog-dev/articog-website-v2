@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "A comparison of Articog's AI accelerated creative engine versus traditional agency production models for speed, scale, and cost.",
   alternates: { canonical: "https://www.articog.com/compare/vs-traditional-production" },
 };
-import { Container, Section, Heading, Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui";
+import { Container, Section, Heading, PageHero, Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 
 export default function ComparisonPage() {
@@ -59,18 +59,18 @@ export default function ComparisonPage() {
   return (
     <div className="bg-black min-h-screen">
       {/* Hero Section */}
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Less traditional production. More AI-native production.
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
       {/* Comparison Table Section */}
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="overflow-x-auto">
             <Table className="border-collapse">

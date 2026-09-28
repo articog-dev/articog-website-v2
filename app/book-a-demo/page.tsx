@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { toast } from "sonner";
 import { Link } from "@/components/ui/Link";
-import { Container, Section, Button, Heading, Input, Textarea, Checkbox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
+import { Container, Button, Heading, PageHero, Input, Textarea, Checkbox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { ArrowRight } from "lucide-react";
 import { trackCalendlyEventScheduled, trackCalendlyOpen, trackDemoFormStart, trackDemoFormSubmit, trackFormError, trackFormSubmit, trackFormSuccess } from "@/lib/analytics";
 import { isTrustedCalendlyEvent } from "@/lib/calendly";
@@ -139,10 +139,10 @@ export default function BookADemoPage() {
   };
 
   return (
-    <Section
+    <PageHero
       id="book-a-demo"
-      size="lg"
-      className="pt-32 md:pt-40 bg-black min-h-screen"
+      contentOnly
+      className="bg-black min-h-screen"
     >
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
@@ -150,8 +150,8 @@ export default function BookADemoPage() {
       />
       <Container>
         <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Tell us what your brand needs every month.
             </Heading>
           </div>
@@ -457,6 +457,6 @@ export default function BookADemoPage() {
           </div>
         </div>
       </Container>
-    </Section>
+    </PageHero>
   );
 }

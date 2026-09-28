@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Link } from "@/components/ui/Link";
-import { Container, Section, Button, Heading } from "@/components/ui";
+import { Container, Button, Heading, PageHero } from "@/components/ui";
 import { CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function ContactThankYouPage() {
   return (
-    <Section size="lg" className="pt-32 md:pt-40 min-h-[80vh] flex items-center bg-black">
+    <PageHero contentOnly className="min-h-[80vh] flex items-center bg-black">
       <Container>
         <div className="mx-auto max-w-xl text-center">
           <div className="mb-8 flex justify-center">
@@ -19,19 +19,19 @@ export default function ContactThankYouPage() {
               <CheckCircle2 size={32} />
             </div>
           </div>
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center">
+            <Heading as="h1" size="hero" className="text-white">
               Message received
             </Heading>
+            <p className="mx-auto mt-[var(--gap-heading-to-text)] mb-[var(--spacing-title-gap)] max-w-md type-body md:text-lg" style={{ color: "rgba(255,255,255,0.55)", lineHeight: 1.65 }}>
+              Thanks for reaching out. We&apos;ll follow up within 1 business day.
+            </p>
           </div>
-          <p className="mx-auto mb-10 max-w-md type-body md:text-lg" style={{ color: "rgba(255,255,255,0.55)", lineHeight: 1.65 }}>
-            Thanks for reaching out. We&apos;ll follow up within 1 business day.
-          </p>
           <Button asChild variant="primary" size="lg">
             <Link href="/">Back to Home</Link>
           </Button>
         </div>
       </Container>
-    </Section>
+    </PageHero>
   );
 }

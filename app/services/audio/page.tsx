@@ -5,10 +5,9 @@ export const metadata: Metadata = {
   title: "Audio & Sound Production | Articog",
   description: "Audio and sound production for video campaigns, ads, and brand storytelling, including voice, music, and finishing.",
 };
-import { Container, Section, Heading, Button } from "@/components/ui";
+import { Container, Section, Heading, Button, PageHero } from "@/components/ui";
 import { Link } from "@/components/ui/Link";
 import { Mic2, Music, Waves, Speaker, Info, ArrowRight, AudioLines } from "lucide-react";
-import { ServiceDetails } from "@/components/sections/ServiceDetails";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 
 export default function AudioPage() {
@@ -37,18 +36,18 @@ export default function AudioPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: "Audio & Sound" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Voice, music and sound in the same monthly workflow.
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div>
             <Heading as="h2" size="section" className="mb-4 text-white">What We Deliver</Heading>
@@ -101,8 +100,6 @@ export default function AudioPage() {
           </div>
         </Container>
       </Section>
-
-      <ServiceDetails category="audio" />
 
       <Section size="lg">
         <Container>

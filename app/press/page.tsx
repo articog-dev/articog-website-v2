@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Container, Heading, Section } from "@/components/ui";
+import { Container, Heading, PageHero, Section } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Press & Media Kit | Articog",
@@ -37,19 +37,18 @@ export default function PressPage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans">
-      <div className="flex-grow pt-32 md:pt-40 pb-20">
+      <PageHero contentOnly className="flex-grow pb-20">
         <Container>
           <div className="mx-auto max-w-4xl">
-            <div className="text-center mb-16">
-              <Heading as="h1" size="hero" className="mb-6 text-white">
+            <div className="text-center mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero" className="text-white">
                 Press & Media Kit
               </Heading>
+              <p className="mt-[var(--gap-heading-to-text)] type-h3 max-w-2xl leading-relaxed text-white/60">
+                Resources and information for journalists and media covering
+                Articog&apos;s mission to transform creative production with AI.
+              </p>
             </div>
-
-            <p className="type-h3 mb-12 max-w-2xl leading-relaxed text-white/60">
-              Resources and information for journalists and media covering
-              Articog&apos;s mission to transform creative production with AI.
-            </p>
 
             <Section className="border-t border-white/[0.08] py-12">
               <Heading as="h2" size="section" className="mb-8 text-white">
@@ -161,7 +160,7 @@ export default function PressPage() {
 
           </div>
         </Container>
-      </div>
+      </PageHero>
     </div>
   );
 }

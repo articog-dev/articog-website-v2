@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import {
@@ -46,23 +46,23 @@ export default async function ServicePage({
 
   return (
     <div className="min-h-screen bg-black">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: service.title }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               {service.title}
             </Heading>
             {service.description && (
-              <p className="mx-auto max-w-2xl type-body-lg text-white/60">
+              <p className="mx-auto mt-[var(--gap-heading-to-text)] max-w-2xl type-body-lg text-white/60">
                 {service.description}
               </p>
             )}
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
-      <Section size="md" className="border-t border-white/5 bg-white/[0.02]">
+      <Section size="md" className="border-t border-white/5 bg-white/[0.02] pt-0">
         <Container>
           <div className="max-w-3xl">
             <Heading as="h2" size="section" className="mb-4 text-white">What We Deliver</Heading>

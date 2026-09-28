@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 import { Link } from "@/components/ui/Link";
 import { ArrowRight } from "lucide-react";
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { Pipeline } from "@/components/sections/Pipeline";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 
@@ -57,19 +57,19 @@ export default function HowItWorksPage() {
 
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
-          <div className="mx-auto max-w-3xl text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="mx-auto max-w-3xl text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               From brief to live in days
             </Heading>
-            <p className="mx-auto max-w-2xl type-body md:text-lg leading-relaxed mb-12" style={{ color: "rgba(255,255,255,0.65)" }}>
+            <p className="mx-auto mt-[var(--gap-heading-to-text)] max-w-2xl type-body md:text-lg leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
               We replace rigid timelines and overhead with a high velocity engine powered by AI and directed by humans.
             </p>
           </div>
 
         </Container>
-      </Section>
+      </PageHero>
 
       <Pipeline steps={pipelineSteps} />
 

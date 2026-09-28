@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Creative Strategy & Concepting | Articog",
   description: "Creative strategy and concepting for growth-stage brands that need sharper positioning, stronger ideas, and campaign clarity.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Section, Heading, PageHero } from "@/components/ui";
 import { Lightbulb, Palette, LayoutGrid, MessageSquare } from "lucide-react";
 import { ServiceDetails } from "@/components/sections/ServiceDetails";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -33,19 +33,19 @@ export default function CreativeStrategyPage() {
   return (
     <div className="bg-black min-h-screen">
       {/* Hero Section */}
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: "Creative Strategy & Concepting" }]} />
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               Start with the product. Build the story.
             </Heading>
           </div>
         </Container>
-      </Section>
+      </PageHero>
 
       {/* What We Do Section */}
-      <Section size="md" className="bg-white/[0.02]">
+      <Section size="md" className="bg-white/[0.02] pt-0">
         <Container>
           <div className="mb-12">
             <Heading as="h2" size="section" className="mb-4 text-white">What We Do</Heading>
@@ -66,7 +66,6 @@ export default function CreativeStrategyPage() {
         </Container>
       </Section>
 
-      {/* Engagement Note Section */}
       <Section size="md" className="border-t border-white/5">
         <Container>
           <div className="max-w-4xl mx-auto text-center">

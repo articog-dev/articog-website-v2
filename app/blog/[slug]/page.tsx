@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 
 import { Link } from "@/components/ui/Link";
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { YouTubeEmbed } from "@/components/blog/YouTubeEmbed";
 import { getBlogPostBySlug, getNativeBlogPosts } from "@/lib/blog";
@@ -101,7 +101,7 @@ export default async function BlogArticlePage({
   return (
     <div className="bg-black min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container className="max-w-4xl">
           <div className="mb-8">
             <Breadcrumbs
@@ -119,11 +119,11 @@ export default async function BlogArticlePage({
             </Link>
           </div>
 
-          <div className="text-center mb-16">
-            <Heading as="h1" size="hero" className="mb-6 text-white">
+          <div className="text-center mb-[var(--spacing-title-gap)]">
+            <Heading as="h1" size="hero" className="text-white">
               {post.title}
             </Heading>
-            <div className="flex flex-wrap items-center gap-4 type-small text-white/55">
+            <div className="mt-[var(--gap-heading-to-text)] flex flex-wrap items-center gap-4 type-small text-white/55">
               <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
               <span>•</span>
               <span>{post.author}</span>
@@ -205,7 +205,7 @@ export default async function BlogArticlePage({
 
           <FinalCTA content={{ ctaHref: "/book-a-demo", ctaLabel: "Book a Demo" }} />
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }

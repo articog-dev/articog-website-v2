@@ -5,16 +5,18 @@ export const metadata: Metadata = {
   title: "Cookie Policy | Articog",
   description: "Information about how Articog uses cookies and similar technologies.",
 };
-import { Container, Section, Heading } from "@/components/ui";
+import { Container, Heading, PageHero } from "@/components/ui";
 
 export default function CookiePolicyPage() {
   return (
     <div className="bg-black min-h-screen">
-      <Section size="lg" className="pt-32 md:pt-40">
+      <PageHero contentOnly>
         <Container>
           <div className="mx-auto max-w-3xl">
-            <Heading as="h1" size="hero" className="mb-6">Cookie Policy</Heading>
-            <p className="type-small text-muted-safe mb-12 uppercase tracking-widest">Last updated: August 19, 2026</p>
+            <div className="mb-[var(--spacing-title-gap)]">
+              <Heading as="h1" size="hero">Cookie Policy</Heading>
+              <p className="mt-[var(--gap-heading-to-text)] type-small text-muted-safe uppercase tracking-widest">Last updated: August 19, 2026</p>
+            </div>
 
             <div className="space-y-12 type-small leading-relaxed text-white/60">
               <section>
@@ -32,7 +34,7 @@ export default function CookiePolicyPage() {
             </div>
           </div>
         </Container>
-      </Section>
+      </PageHero>
     </div>
   );
 }
