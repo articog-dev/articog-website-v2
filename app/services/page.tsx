@@ -370,8 +370,23 @@ export default function ServicesPage() {
         className="flex min-h-svh items-center justify-center text-center md:min-h-[52vh]"
       />
 
-      <Section className="border-t border-white/[0.05] py-20 md:py-28">
-        <Container className="max-w-[1440px]">
+      <Section className="overflow-hidden border-t border-white/[0.05] py-20 md:py-28">
+        <LazyVideo
+          src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
+          autoPlay
+          muted
+          playsInline
+          loop
+          controls={false}
+          preload="none"
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[min(100svh,56.25vw)] w-full object-cover opacity-40"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[min(100svh,56.25vw)] bg-black/50"
+          aria-hidden="true"
+        />
+        <Container className="relative z-10 max-w-[1440px]">
           <div className="mb-9 max-w-4xl md:mb-12">
             <Heading as="h2" size="section" className="text-white">
               Film, video, image and audio, produced faster with AI.
