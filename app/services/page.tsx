@@ -259,21 +259,18 @@ export const serviceGroups = [
 const organizedServices = topLevelServiceLinks.map((serviceLink, index) => {
   const group = serviceGroups[index];
   const [primaryService, ...relatedServices] = group.items;
-  const images: Record<string, { src: string; alt: string; video?: string }> = {
+  const images: Record<string, { src: string; alt: string }> = {
     "/services/ai-video-production": {
       src: "https://media.articog.com/images/services/hf_20260824_090509_2e0e972f-465c-435c-8144-b01b1133427b.png",
       alt: "Brand films and commercial production",
-      video: "https://media.articog.com/videos/backgrounds/WA-03.mp4",
     },
     "/services/ad-creative": {
       src: "https://media.articog.com/images/services/hf_20260820_165439_f355b7b5-fc30-4852-9c69-cb8433145326.png",
       alt: "Performance creative production",
-      video: "https://media.articog.com/videos/backgrounds/WA-02.mp4",
     },
     "/services/social-creative": {
       src: "https://media.articog.com/images/services/hf_20260821_215506_41068c08-3be5-4f02-bb81-9d5da0895c98.png",
       alt: "Creator-style social content production",
-      video: "https://media.articog.com/videos/backgrounds/WA-01.mp4",
     },
   };
   const image = images[serviceLink.href];
@@ -294,27 +291,12 @@ function ServiceCard({ service, featured = false }: { service: OrganizedService;
     <Card className={`h-full gap-0 overflow-hidden border-white/[0.08] bg-white/[0.02] p-0 transition-[border-color,background-color] duration-300 hover:border-white/20 hover:bg-white/[0.035] ${featured ? "" : "md:min-h-[260px]"}`}>
       {service.image ? (
         <div className="relative aspect-[16/10] overflow-hidden">
-          {service.image.video ? (
-            <div className="absolute inset-0 motion-reduce:hidden">
-              <LazyVideo
-                src={service.image.video}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster={service.image.src}
-                aria-label={service.image.alt}
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
-              />
-            </div>
-          ) : null}
           <Image
             src={service.image.src}
             alt={service.image.alt}
             fill
             sizes={featured ? "(max-width: 767px) 100vw, (max-width: 1279px) 33vw, 400px" : "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 300px"}
-            className={`object-cover transition-transform duration-500 group-hover/card:scale-[1.03] ${service.image.video ? "hidden motion-reduce:block" : ""}`}
+            className="object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
           />
         </div>
       ) : null}
@@ -356,12 +338,25 @@ export default function ServicesPage() {
         title="Creative services for campaign volume."
         media={
           <>
+            <div className="absolute inset-0 motion-reduce:hidden">
+              <LazyVideo
+                src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                poster="https://media.articog.com/images/services/hf_20260820_165439_f355b7b5-fc30-4852-9c69-cb8433145326.png"
+                className="absolute inset-0 h-full w-full object-cover"
+                aria-hidden="true"
+              />
+            </div>
             <Image
               src="https://media.articog.com/images/services/hf_20260820_165439_f355b7b5-fc30-4852-9c69-cb8433145326.png"
               alt=""
               fill
               sizes="100vw"
-              className="h-full w-full object-cover"
+              className="hidden h-full w-full object-cover motion-reduce:block"
               aria-hidden="true"
             />
             <MediaOverlay
