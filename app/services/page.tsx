@@ -338,25 +338,14 @@ export default function ServicesPage() {
         title="Creative services for campaign volume."
         media={
           <>
-            <div className="absolute inset-0 motion-reduce:hidden">
-              <LazyVideo
-                src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                poster="https://media.articog.com/images/services/hf_20260820_165439_f355b7b5-fc30-4852-9c69-cb8433145326.png"
-                className="absolute inset-0 h-full w-full object-cover"
-                aria-hidden="true"
-              />
-            </div>
-            <Image
-              src="https://media.articog.com/images/services/hf_20260820_165439_f355b7b5-fc30-4852-9c69-cb8433145326.png"
-              alt=""
-              fill
-              sizes="100vw"
-              className="hidden h-full w-full object-cover motion-reduce:block"
+            <LazyVideo
+              src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="absolute inset-0 h-full w-full object-cover"
               aria-hidden="true"
             />
             <MediaOverlay
