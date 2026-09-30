@@ -48,7 +48,7 @@ export function OurApproach() {
 
   useBufferedAutoplay(videoRef, {
     enabled: shouldLoad,
-    src: "/videos/our-approach.mp4",
+    src: "https://media.articog.com/videos/backgrounds/WA-02.mp4",
   });
 
   return (

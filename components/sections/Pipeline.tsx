@@ -37,7 +37,7 @@ export function Pipeline({ steps, align = "left", showDetails = false }: Pipelin
 
   useBufferedAutoplay(videoRef, {
     enabled: shouldLoad,
-    src: "/videos/pipeline.mp4",
+    src: "https://media.articog.com/videos/backgrounds/WA-03.mp4",
     waitForBuffer: false,
   });
 

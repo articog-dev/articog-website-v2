@@ -28,7 +28,7 @@ export function Hero({ content }: HeroProps) {
     const video = videoRef.current;
     if (!video || !shouldLoadVideo) return;
 
-    const src = "/videos/hero.mp4";
+    const src = "https://media.articog.com/videos/backgrounds/WA-01.mp4";
     const nextSrc = new URL(src, window.location.href).toString();
     if (video.currentSrc === nextSrc || video.getAttribute("src") === src) return;
     video.setAttribute("src", src);
