@@ -62,11 +62,21 @@ export default function RootLayout({
 }>) {
   return (
     <html
+      suppressHydrationWarning
       lang="en"
       data-scroll-behavior="smooth"
       className={`${sora.variable} h-full antialiased`}
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try {
+  if (localStorage.getItem("articog-announcement-closed") === "1") {
+    document.documentElement.setAttribute("data-announcement", "closed");
+  }
+} catch {}`,
+          }}
+        />
         <link rel="preconnect" href="https://media.articog.com" crossOrigin="" />
       </head>
       <body className="min-h-full flex flex-col">

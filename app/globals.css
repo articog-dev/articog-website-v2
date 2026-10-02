@@ -654,3 +654,15 @@ body:has(#book-a-demo) > footer [class~="text-white/70"] {
 body:has(#book-a-demo) > footer [class~="text-white/65"] {
   color: rgba(255, 255, 255, 0.72);
 }
+
+html[data-announcement="closed"] .announcement-bar {
+  display: none;
+}
+
+html[data-announcement="closed"] .site-header {
+  top: 0;
+}
+
+html[data-announcement="closed"] {
+  --header-offset: 64px;
+}
