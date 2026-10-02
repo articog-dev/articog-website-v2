@@ -52,7 +52,7 @@ export function Pipeline({ steps, align = "left", showDetails = false }: Pipelin
           loop
           controls={false}
           preload="none"
-          poster={shouldLoad ? "/pipeline-poster.jpg" : undefined}
+          poster="/pipeline-poster.jpg"
           className="h-full w-full object-cover"
           aria-hidden="true"
         />

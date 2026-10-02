@@ -24,6 +24,9 @@ describe("performance boundaries", () => {
     expect(hero).toContain('preload="none"');
     expect(hero).toContain('poster="/hero-poster.jpg"');
     expect(hero).toContain('setShouldLoadVideo(true)');
+    expect(hero).toContain("requestIdleCallback");
+    expect(hero).toContain("saveData");
+    expect(hero).toContain('matchMedia("(prefers-reduced-motion: reduce)")');
     expect(hero).toContain('video.setAttribute("src", src);');
     expect(hero).toContain("useBufferedAutoplay");
     expect(hero).not.toContain("autoPlay");
@@ -42,6 +45,10 @@ describe("performance boundaries", () => {
       expect(source).toContain("useBufferedAutoplay");
       expect(source).toContain("waitForBuffer: false");
     }
+
+    const lazyVideo = read("components", "ui", "LazyVideo.tsx");
+    expect(lazyVideo).toContain("requestIdleCallback");
+    expect(lazyVideo).toContain("saveData");
   });
 
   it("keeps stable media sizing and avoids blanket showcase will-change", () => {

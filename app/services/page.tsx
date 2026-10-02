@@ -340,6 +340,7 @@ export default function ServicesPage() {
           <>
             <LazyVideo
               src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
+              poster="/hero-poster.jpg"
               autoPlay
               muted
               loop

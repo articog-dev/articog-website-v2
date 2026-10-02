@@ -17,11 +17,36 @@ export function Hero({ content }: HeroProps) {
   ReactDOM.preload("/hero-poster.jpg", { as: "image", fetchPriority: "high" });
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setShouldLoadVideo(true);
-    });
+    const connection = (navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }).connection;
+    const isSlowConnection = connection?.saveData ||
+      connection?.effectiveType === "slow-2g" ||
+      connection?.effectiveType === "2g";
 
-    return () => window.cancelAnimationFrame(frame);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || isSlowConnection) return;
+
+    let idleHandle: number | undefined;
+    let fallbackTimer: number | undefined;
+    const startWhenIdle = () => {
+      const requestIdle = window.requestIdleCallback?.bind(window);
+      if (requestIdle) {
+        idleHandle = requestIdle(() => setShouldLoadVideo(true), { timeout: 3000 });
+      } else {
+        fallbackTimer = window.setTimeout(() => setShouldLoadVideo(true), 1500);
+      }
+    };
+
+    if (document.readyState === "complete") startWhenIdle();
+    else window.addEventListener("load", startWhenIdle, { once: true });
+
+    return () => {
+      window.removeEventListener("load", startWhenIdle);
+      if (idleHandle !== undefined) {
+        window.cancelIdleCallback?.(idleHandle);
+      }
+      if (fallbackTimer !== undefined) window.clearTimeout(fallbackTimer);
+    };
   }, []);
 
   useEffect(() => {

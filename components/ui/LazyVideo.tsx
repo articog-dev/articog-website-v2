@@ -27,17 +27,51 @@ export function LazyVideo({
     const video = videoRef.current;
     if (!video || hasFailed) return;
 
+    const connection = (navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }).connection;
+    const isSlowConnection = connection?.saveData ||
+      connection?.effectiveType === "slow-2g" ||
+      connection?.effectiveType === "2g";
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || isSlowConnection) return;
+
+    let idleHandle: number | undefined;
+    let fallbackTimer: number | undefined;
+    let loadHandler: (() => void) | undefined;
+    const loadWhenIdle = () => {
+      const requestIdle = window.requestIdleCallback?.bind(window);
+      if (requestIdle) {
+        idleHandle = requestIdle(() => setShouldLoad(true), { timeout: 3000 });
+      } else {
+        fallbackTimer = window.setTimeout(() => setShouldLoad(true), 1500);
+      }
+    };
+    const scheduleLoad = () => {
+      if (document.readyState === "complete") {
+        loadWhenIdle();
+      } else {
+        loadHandler = loadWhenIdle;
+        window.addEventListener("load", loadWhenIdle, { once: true });
+      }
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
-        setShouldLoad(true);
+        scheduleLoad();
         observer.disconnect();
       },
       { rootMargin: "180px 0px", threshold: 0.01 },
     );
 
     observer.observe(video);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (loadHandler) window.removeEventListener("load", loadHandler);
+      if (idleHandle !== undefined) window.cancelIdleCallback?.(idleHandle);
+      if (fallbackTimer !== undefined) window.clearTimeout(fallbackTimer);
+    };
   }, [hasFailed]);
 
   useEffect(() => {
