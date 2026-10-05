@@ -6,7 +6,7 @@ Official marketing website for **Articog**, an AI-native film and creative produ
 - Repository: `articog-dev/articog-website-v2` (Version 2)
 - Documentation: [Technical documentation](docs/TECHNICAL_DOCUMENTATION.md) · [Site map](docs/SITE_MAP.md)
 - Google Sheet: [Articog Google Sheet](https://docs.google.com/spreadsheets/d/1FqK6pxYtBzuWUDBLrON_0IZSQoKrViYTCGbT4rFfhSg/edit?gid=0#gid=0)
-- Calendly (demo booking): https://calendly.com/articog-media/30min
+- Cal.com booking: https://cal.com/articog/demo-india · https://cal.com/articog/demo-americas
 
 ## Version history
 
@@ -30,7 +30,7 @@ Official marketing website for **Articog**, an AI-native film and creative produ
 | Data / rate limiting | Upstash Redis (`@upstash/redis`) and `@upstash/ratelimit` |
 | Email | Resend (REST API) |
 | Lead mirror | Google Sheets (Apps Script web app URL) |
-| Scheduling | Calendly popup widget on `/book-a-demo` |
+| Scheduling | Inline Cal.com regional booking calendars on `/book-a-demo` |
 | Careers | Static role list (`components/careers/BreezyOpenings.tsx`) with email applications |
 | Newsletter | Beehiiv embedded form |
 | Analytics | Google Analytics 4 (`NEXT_PUBLIC_GA_MEASUREMENT_ID`) |

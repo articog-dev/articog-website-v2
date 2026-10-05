@@ -116,28 +116,7 @@ test.describe("contact flow", () => {
 });
 
 test.describe("book-a-demo flow", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.route("**/assets.calendly.com/assets/external/widget.js", async (route) => {
-      await route.fulfill({
-        contentType: "application/javascript",
-        body: "window.Calendly = { initPopupWidget: function () { window.__calendlyOpened = true; } };",
-      });
-    });
-  });
-
-  test("loads the page and makes the Calendly integration available", async ({ page }) => {
-    await page.goto("/book-a-demo");
-    await expect(page.getByRole("heading", { name: "Tell us what your brand needs every month." })).toBeVisible();
-    await expect.poll(() => page.evaluate(() => typeof window.Calendly?.initPopupWidget)).toBe("function");
-  });
-
-  test("handles scheduling failure without exposing raw provider details", async ({ page }) => {
-    await page.route("**/assets.calendly.com/assets/external/widget.js", async (route) => {
-      await route.fulfill({
-        contentType: "application/javascript",
-        body: "window.Calendly = { initPopupWidget: function () { throw new Error('provider secret details'); } };",
-      });
-    });
+  test("shows Cal.com scheduling only after demo submission and switches regional calendars", async ({ page }) => {
     await page.route("**/api/demo", async (route) => {
       await route.fulfill({
         status: 200,
@@ -147,10 +126,50 @@ test.describe("book-a-demo flow", () => {
     });
 
     await page.goto("/book-a-demo");
+    await expect(page.getByRole("heading", { name: "Tell us what your brand needs every month." })).toBeVisible();
+    await expect(page.locator("#cal-booking-panel")).toHaveCount(0);
+    await expect(page.locator("#project-first-heading")).toBeVisible();
+
     await fillDemoForm(page);
     await page.getByRole("button", { name: "Continue to Scheduling" }).click();
-    await expect(page.locator('p[role="alert"]')).toHaveText("We could not open scheduling. Please try again.");
-    await expect(page.getByText(/provider secret details|Upstash|Authorization/i)).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Pick a time that works for you" })).toBeVisible();
+    await expect(page.locator("#project-first-heading")).toBeHidden();
+
+    const indiaTab = page.getByRole("tab", { name: "India / Middle East Team" });
+    const americasTab = page.getByRole("tab", { name: "Americas Team" });
+    const embed = page.locator("#cal-booking-panel [data-cal-link]");
+    const iframe = page.locator("#cal-booking-panel iframe");
+
+    await expect(indiaTab).toBeVisible();
+    await expect(americasTab).toBeVisible();
+    await expect(embed).toHaveAttribute("data-cal-link", /articog\/demo-(india|americas)/);
+    await expect(iframe).toHaveAttribute("src", /name=E2E\+Test/);
+    await expect(iframe).toHaveAttribute("src", /email=e2e%40example\.com/);
+
+    await indiaTab.click();
+    await expect(embed).toHaveAttribute("data-cal-link", "articog/demo-india");
+    await americasTab.click();
+    await expect(americasTab).toHaveAttribute("aria-selected", "true");
+    await expect(embed).toHaveAttribute("data-cal-link", "articog/demo-americas");
+
+    await indiaTab.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(americasTab).toBeFocused();
+    await expect(embed).toHaveAttribute("data-cal-link", "articog/demo-americas");
+    await expect(page.getByRole("link", { name: "Open the booking page directly" }))
+      .toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  test("shows a safe error when the demo request cannot be saved", async ({ page }) => {
+    await page.route("**/api/demo", async (route) => {
+      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ success: false }) });
+    });
+
+    await page.goto("/book-a-demo");
+    await fillDemoForm(page);
+    await page.getByRole("button", { name: "Continue to Scheduling" }).click();
+    await expect(page.locator('p[role="alert"]')).toHaveText("We could not save your request. Please try again.");
+    await expect(page.getByText(/Upstash|Authorization/i)).toHaveCount(0);
   });
 });
 

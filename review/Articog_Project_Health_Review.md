@@ -33,7 +33,7 @@ flowchart TD
   Validation --> Redis[Upstash: limits, idempotency, lead records]
   Routes --> Sheets[Google Sheets mirror]
   Routes --> Resend[Resend notifications]
-  Browser --> Providers[Calendly, Beehiiv, YouTube, GA4]
+  Browser --> Providers[Cal.com, Beehiiv, YouTube, GA4]
 ```
 
 ### Runtime shape
@@ -42,7 +42,7 @@ flowchart TD
 - The root layout provides global font loading, announcement/header/footer, analytics, toast notifications, and organization JSON-LD.
 - Three Route Handlers serve `POST /api/contact`, `POST /api/demo`, and `POST /api/privacy-request`.
 - Form content and site pages are not CMS-backed. The site uses TypeScript arrays/objects and route-local JSX.
-- External systems are Upstash Redis, Resend, Google Sheets via an Apps Script URL, Calendly, Beehiiv, YouTube, and GA4.
+- External systems are Upstash Redis, Resend, Google Sheets via an Apps Script URL, Cal.com, Beehiiv, YouTube, and GA4.
 
 ### Form request path
 
@@ -117,7 +117,7 @@ There is no application content database or CMS. This avoids runtime CMS availab
 - Home hero video uses a high-priority local poster and waits for page load plus browser idle before fetching the remote MP4. It skips video loading for reduced-motion, Save-Data, and 2G users.
 - The pipeline waits until near the viewport before loading its source and displays its poster from the first render. `LazyVideo` waits for viewport relevance plus page-load/idle before attaching a source, and the services hero now has a poster fallback.
 - The autoplay hook respects reduced-motion settings and pauses/retries based on visibility and buffering state.
-- Calendly assets are scoped to the booking page. GA scripts are consent-gated and loaded after interaction/consent; the analytics event listener is installed only while consent is granted.
+- Cal.com embed resources are scoped through the booking page's CSP allowlist. GA scripts are consent-gated and loaded after interaction/consent; the analytics event listener is installed only while consent is granted.
 - `next.config.ts` applies long cache headers to selected immutable assets and allows only known remote image hosts.
 
 ### Performance risks and opportunities

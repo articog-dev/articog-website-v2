@@ -20,6 +20,7 @@ Key Canonical Pages:
 - About: https://articog.com/about
 - Careers: https://articog.com/careers
 - Book a Demo: https://articog.com/book-a-demo
+- Regional booking calendars: https://cal.com/articog/demo-india and https://cal.com/articog/demo-americas
 - Contact: https://articog.com/contact
 
 Note: No confidential or client-specific information is included in this file.

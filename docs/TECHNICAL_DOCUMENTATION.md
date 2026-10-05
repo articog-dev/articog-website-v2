@@ -11,7 +11,7 @@ Browser ──> Next.js (Vercel)
               │     ├─ Upstash Redis: rate limit, idempotency, durable lead storage
               │     ├─ Google Sheets (Apps Script URL): secondary lead mirror
               │     └─ Resend: confirmation and internal alert emails
-              └─ Third-party embeds: Calendly, Beehiiv, YouTube, Google Analytics 4
+              └─ Third-party embeds: Cal.com, Beehiiv, YouTube, Google Analytics 4
 ```
 
 ## 2. Technology stack
@@ -71,7 +71,7 @@ All three routes accept `POST` with JSON and share the same pipeline:
 
 | Route | Used by | Notes |
 | --- | --- | --- |
-| `POST /api/demo` | `/book-a-demo` | After success the page opens the Calendly popup (prefilled name and email). |
+| `POST /api/demo` | `/book-a-demo` | The page offers a separate inline Cal.com calendar and keeps the project request form as an alternative. |
 | `POST /api/contact` | `/contact` | Sends an alert to `CONTACT_INTERNAL_ALERT_EMAIL` if the Sheets mirror fails. |
 | `POST /api/privacy-request` | `/privacy/request`, `/privacy-choices` | Alerts go to `PRIVACY_REQUEST_ALERT_EMAIL`. |
 
@@ -92,7 +92,7 @@ All three routes accept `POST` with JSON and share the same pipeline:
 | `resend.ts` | Email sending through Resend |
 | `observability.ts`, `request-context.ts` | Structured logs and request IDs |
 | `analytics.ts`, `cookie-consent.ts` | GA4 event helpers and consent handling |
-| `calendly.ts` | Calendly URL and trusted-event checks |
+| `cal.ts` | Cal.com regional team links and public booking URLs |
 | `error-page.ts` | Error page helpers |
 | `utils.ts` | `cn()` class-name helper |
 
@@ -114,7 +114,7 @@ Set these in the hosting environment (never commit values):
 
 Configured in `next.config.ts` `headers()` for all routes:
 
-- Content-Security-Policy restricting scripts, styles, images, media, frames, and connections to `self` plus the allow-listed providers (Google Analytics/Tag Manager, Calendly, Beehiiv, Breezy, YouTube, `media.articog.com`, Resend).
+- Content-Security-Policy restricting scripts, styles, images, media, frames, and connections to `self` plus the allow-listed providers (Google Analytics/Tag Manager, Cal.com, Beehiiv, Breezy, YouTube, `media.articog.com`, Resend).
 - `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security` (1 year, includeSubDomains), `Referrer-Policy: strict-origin-when-cross-origin`, and a `Permissions-Policy` disabling camera, microphone, and geolocation.
 - Long-lived immutable caching for `/videos`, `/services` images, posters, and logos. Rename a file when its content changes.
 - Form APIs fail closed, return generic errors, and hold no secrets in client code.

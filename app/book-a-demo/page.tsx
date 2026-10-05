@@ -1,56 +1,40 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
 import { toast } from "sonner";
 import { Link } from "@/components/ui/Link";
 import { Container, Button, Heading, PageHero, Input, Textarea, Checkbox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { ArrowRight } from "lucide-react";
-import { trackCalendlyEventScheduled, trackCalendlyOpen, trackDemoFormStart, trackDemoFormSubmit, trackFormError, trackFormSubmit, trackFormSuccess } from "@/lib/analytics";
-import { isTrustedCalendlyEvent } from "@/lib/calendly";
+import { BookingTabs } from "@/components/booking/BookingTabs";
+import { CAL_TEAMS, calPublicUrl } from "@/lib/cal";
+import { trackBookingOpen, trackDemoFormStart, trackDemoFormSubmit, trackFormError, trackFormSubmit, trackFormSuccess } from "@/lib/analytics";
 
-const CALENDLY_URL = "https://calendly.com/articog-media/30min";
-declare global {
-  interface Window {
-    Calendly?: {
-      initPopupWidget: (options: {
-        url: string;
-        prefill?: {
-          name?: string;
-          email?: string;
-        };
-      }) => void;
-    };
-  }
+interface BookingPrefill {
+  name: string;
+  email: string;
+  notes: string;
 }
 
 export default function BookADemoPage() {
+  const [step, setStep] = useState<"form" | "schedule">("form");
+  const [prefill, setPrefill] = useState<BookingPrefill | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [hasTrackedFormStart, setHasTrackedFormStart] = useState(false);
-  const hasTrackedCalendlySchedule = useRef(false);
   const formRef = useRef<HTMLFormElement | null>(null);
+  const scheduleHeadingRef = useRef<HTMLHeadingElement | null>(null);
 
   useEffect(() => {
-    const handleCalendlyMessage = (event: MessageEvent) => {
-      if (isTrustedCalendlyEvent(event) && !hasTrackedCalendlySchedule.current) {
-        hasTrackedCalendlySchedule.current = true;
-        trackCalendlyEventScheduled();
-      }
-    };
+    if (step !== "schedule") return;
+    const heading = scheduleHeadingRef.current;
+    if (!heading) return;
 
-    const stylesheet = document.createElement("link");
-    stylesheet.rel = "stylesheet";
-    stylesheet.href = "https://assets.calendly.com/assets/external/widget.css";
-    stylesheet.dataset.calendlyWidget = "true";
-    document.head.appendChild(stylesheet);
-
-    window.addEventListener("message", handleCalendlyMessage);
-    return () => {
-      window.removeEventListener("message", handleCalendlyMessage);
-      stylesheet.remove();
-    };
-  }, []);
+    heading.focus({ preventScroll: true });
+    heading.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
+  }, [step]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -73,10 +57,6 @@ export default function BookADemoPage() {
     const website = (formData.get("website") as string) || "";
     const consent = formData.get("consent") === "on";
     const name = `${firstName} ${lastName}`.trim();
-    const fallbackCalendlyUrl = `${CALENDLY_URL}?${new URLSearchParams({
-      name,
-      email,
-    }).toString()}`;
 
     try {
       const response = await fetch("/api/demo", {
@@ -108,25 +88,19 @@ export default function BookADemoPage() {
         return;
       }
 
-      toast.success("Thanks — we’ll reach out and open a scheduling link next.");
+      const notes = [
+        `Company: ${company}`,
+        role && `Role: ${role}`,
+        serviceInterest.length > 0 && `Service interest: ${serviceInterest.join(", ")}`,
+        budget && `Budget: ${budget}`,
+        timeline && `Timeline: ${timeline}`,
+        projectContext && `Project context: ${projectContext}`,
+      ].filter(Boolean).join("\n");
 
-      try {
-        if (window.Calendly) {
-          trackCalendlyOpen();
-          window.Calendly.initPopupWidget({
-            url: CALENDLY_URL,
-            prefill: { name, email },
-          });
-        } else {
-          trackCalendlyOpen();
-          window.open(fallbackCalendlyUrl, "_blank", "noopener,noreferrer");
-        }
-      } catch {
-        const message = "We could not open scheduling. Please try again.";
-        setErrorMessage(message);
-        toast.error(message);
-        trackFormError("demo", message);
-      }
+      setPrefill({ name, email, notes });
+      trackBookingOpen();
+      setStep("schedule");
+      toast.success("Thanks! Pick a time that works for you below.");
       trackFormSuccess("demo");
     } catch {
       const message = "We could not save your request. Please try again.";
@@ -144,10 +118,6 @@ export default function BookADemoPage() {
       contentOnly
       className="bg-black min-h-screen"
     >
-      <Script
-        src="https://assets.calendly.com/assets/external/widget.js"
-        strategy="afterInteractive"
-      />
       <Container>
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-[var(--spacing-title-gap)]">
@@ -156,14 +126,18 @@ export default function BookADemoPage() {
             </Heading>
           </div>
 
-          {/* Form */}
-          <div
-            className="rounded-2xl p-8 md:p-12"
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
-          >
+          <section hidden={step !== "form"} aria-labelledby="project-first-heading">
+            <Heading id="project-first-heading" as="h2" size="section" className="mb-6 text-center text-white">
+              Prefer to tell us about your project first?
+            </Heading>
+
+            <div
+              className="rounded-2xl p-8 md:p-12"
+              style={{
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}
+            >
             <form
               ref={formRef}
               onSubmit={handleSubmit}
@@ -454,7 +428,44 @@ export default function BookADemoPage() {
                 .
               </div>
             </form>
-          </div>
+            </div>
+          </section>
+
+          {step === "schedule" && prefill ? (
+            <section aria-labelledby="pick-a-time-heading" className="scroll-mt-8">
+              <h2
+                ref={scheduleHeadingRef}
+                id="pick-a-time-heading"
+                tabIndex={-1}
+                className="type-h2 mb-3 text-center text-white focus-visible:outline-none"
+              >
+                Pick a time that works for you
+              </h2>
+              <p className="mb-6 text-center type-small text-white/60">
+                Choose the team closest to your time zone. Times are shown in your local time.
+              </p>
+              <BookingTabs prefill={prefill} />
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 type-small text-white/55">
+                <button
+                  type="button"
+                  onClick={() => setStep("form")}
+                  className="text-white underline underline-offset-4 transition-colors hover:text-white/75"
+                >
+                  Edit my details
+                </button>
+                <span aria-hidden="true">·</span>
+                <span>Having trouble?</span>
+                <a
+                  href={calPublicUrl(CAL_TEAMS[0].calLink)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white underline underline-offset-4 transition-colors hover:text-white/75"
+                >
+                  Open the booking page directly
+                </a>
+              </div>
+            </section>
+          ) : null}
         </div>
       </Container>
     </PageHero>

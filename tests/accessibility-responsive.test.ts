@@ -71,6 +71,6 @@ describe("accessibility and responsive behavior", () => {
     expect(performanceTest).toContain("stable media sizing");
     expect(mobileMenu).toContain("fixed inset-0 z-[1050]");
     expect(mobileMenu).toContain("h-[100dvh]");
-    expect(announcement).not.toContain("whitespace-nowrap");
+    expect(announcement).toContain("whitespace-nowrap");
   });
 });

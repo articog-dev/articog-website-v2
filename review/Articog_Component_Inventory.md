@@ -123,6 +123,6 @@ The existing Articog Hero, Header, MobileMenu, media galleries, and CTA behavior
 ### Remaining custom UI surfaces
 
 - Header mega-menu and MobileMenu remain custom because their route grouping, hover persistence, and responsive behavior are Articog-specific.
-- Home visual lightbox, CreativeDocument modal, YouTube embeds, BlogFilterList, WorkVideoShowcase, BreezyOpenings, BeehiivForm, GoogleAnalytics, Calendly, and related provider integrations remain custom/provider-specific.
+- Home visual lightbox, CreativeDocument modal, YouTube embeds, BlogFilterList, WorkVideoShowcase, BreezyOpenings, BeehiivForm, GoogleAnalytics, Cal.com, and related provider integrations remain custom/provider-specific.
 - Native hidden honeypots remain intentionally native.
  - Complex service, solution, comparison-grid, work, blog, and case-study surfaces still contain route-local card markup and are not forced into Card where doing so would alter their current structure.

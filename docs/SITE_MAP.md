@@ -113,7 +113,7 @@ Note: `app/sitemap.ts` still lists these 37 URLs in sitemap.xml even though they
 
 | Route | Page |
 | --- | --- |
-| `/book-a-demo` | Demo request form with Calendly scheduling |
+| `/book-a-demo` | Regional Cal.com booking calendars and demo request form |
 | `/thank-you` | Confirmation (excluded from sitemap.xml) |
 | `/thank-you/demo` | Demo confirmation (excluded from sitemap.xml) |
 

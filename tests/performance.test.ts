@@ -6,44 +6,48 @@ const read = (...segments: string[]) =>
   readFileSync(path.join(process.cwd(), ...segments), "utf8");
 
 describe("performance boundaries", () => {
-  it("keeps Calendly route-scoped and analytics consent-gated", () => {
+  it("keeps the Cal.com booking embed route-scoped and analytics consent-gated", () => {
     const bookingPage = read("app", "book-a-demo", "page.tsx");
     const rootLayout = read("app", "layout.tsx");
     const analytics = read("components", "analytics", "GoogleAnalytics.tsx");
 
-    expect(bookingPage).toContain("assets.calendly.com/assets/external/widget.css");
-    expect(rootLayout).not.toContain("assets.calendly.com/assets/external/widget.css");
+    expect(bookingPage).toContain("BookingTabs");
+    expect(rootLayout).not.toContain("@calcom/embed-react");
     expect(analytics).toContain("analyticsConsent !== true");
     expect(analytics).toContain('strategy="afterInteractive"');
   });
 
-  it("keeps the responsive poster-backed hero and lazy below-fold gallery loading", () => {
+  it("keeps the poster-backed autoplay hero and lazy below-fold gallery loading", () => {
     const hero = read("components", "sections", "Hero.tsx");
     const gallery = read("components", "sections", "HomeVisualShowcase.tsx");
 
-    expect(hero).toContain('preload="none"');
+    expect(hero).toContain('src="https://media.articog.com/videos/backgrounds/WA-03.mp4"');
+    expect(hero).toContain("autoPlay");
+    expect(hero).toContain("muted");
+    expect(hero).toContain("playsInline");
+    expect(hero).toContain('preload="auto"');
     expect(hero).toContain('poster="/hero-poster.jpg"');
-    expect(hero).toContain('setShouldLoadVideo(true)');
-    expect(hero).toContain("requestIdleCallback");
-    expect(hero).toContain("saveData");
-    expect(hero).toContain('matchMedia("(prefers-reduced-motion: reduce)")');
-    expect(hero).toContain('video.setAttribute("src", src);');
-    expect(hero).toContain("useBufferedAutoplay");
-    expect(hero).not.toContain("autoPlay");
+    expect(hero).toContain('addEventListener("loadeddata", attemptPlayback)');
+    expect(hero).toContain('addEventListener("canplay", attemptPlayback)');
+    expect(hero).toContain("video.play().catch");
     expect(gallery).toContain('loading="lazy"');
     expect(gallery).not.toContain("priority={");
     expect(gallery).not.toContain("quality={100}");
   });
 
-  it("keeps home videos poster-backed and autoplay-gated", () => {
+  it("keeps home videos poster-backed with muted autoplay retries", () => {
     const files = ["Hero.tsx", "Pipeline.tsx"];
 
     for (const file of files) {
       const source = read("components", "sections", file);
       expect(source).toContain("poster=");
-      expect(source).not.toContain("autoPlay");
-      expect(source).toContain("useBufferedAutoplay");
-      expect(source).toContain("waitForBuffer: false");
+      expect(source).toContain("autoPlay");
+      expect(source).toContain("muted");
+      expect(source).toContain("playsInline");
+      expect(source).toContain('preload="auto"');
+      expect(source).toContain('addEventListener("loadeddata", attemptPlayback)');
+      expect(source).toContain('addEventListener("canplay", attemptPlayback)');
+      expect(source).toContain("video.play().catch");
     }
 
     const lazyVideo = read("components", "ui", "LazyVideo.tsx");
@@ -72,8 +76,11 @@ describe("performance boundaries", () => {
     expect(industriesPage).not.toContain("<video");
   });
 
-  it("removes hydration from stateless global layout components", () => {
-    expect(read("components", "layout", "AnnouncementBar.tsx")).not.toContain('"use client"');
+  it("keeps footer navigation static and the announcement mobile-safe", () => {
+    const announcement = read("components", "layout", "AnnouncementBar.tsx");
+
+    expect(announcement).toContain("whitespace-nowrap");
+    expect(announcement).toContain("onClick");
     expect(read("components", "layout", "FooterNavSections.tsx")).not.toContain('"use client"');
   });
 

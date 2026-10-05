@@ -2,25 +2,9 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { CALENDLY_MESSAGE_ORIGIN, isTrustedCalendlyEvent } from "../lib/calendly";
 import { createContentSecurityPolicy } from "../lib/content-security-policy";
 
 describe("production security hardening", () => {
-  it("accepts only the exact Calendly event origin and event", () => {
-    expect(isTrustedCalendlyEvent({
-      origin: CALENDLY_MESSAGE_ORIGIN,
-      data: { event: "calendly.event_scheduled" },
-    })).toBe(true);
-    expect(isTrustedCalendlyEvent({
-      origin: "https://evil.example",
-      data: { event: "calendly.event_scheduled" },
-    })).toBe(false);
-    expect(isTrustedCalendlyEvent({
-      origin: CALENDLY_MESSAGE_ORIGIN,
-      data: { event: "other.event" },
-    })).toBe(false);
-  });
-
   it("keeps security headers and allows unsafe-eval only in development CSP", () => {
     const source = readFileSync(path.join(process.cwd(), "next.config.ts"), "utf8");
 
@@ -34,20 +18,23 @@ describe("production security hardening", () => {
     expect(createContentSecurityPolicy(false)).not.toContain("'unsafe-eval'");
   });
 
-  it("scopes Calendly assets to the booking page", () => {
+  it("allows the Cal.com booking embed resources", () => {
     const layout = readFileSync(path.join(process.cwd(), "app", "layout.tsx"), "utf8");
     const bookingPage = readFileSync(path.join(process.cwd(), "app", "book-a-demo", "page.tsx"), "utf8");
+    const policy = createContentSecurityPolicy(false);
 
-    expect(layout).not.toContain("assets.calendly.com/assets/external/widget.js");
-    expect(layout).not.toContain("assets.calendly.com/assets/external/widget.css");
-    expect(bookingPage).toContain("assets.calendly.com/assets/external/widget.js");
-    expect(bookingPage).toContain("assets.calendly.com/assets/external/widget.css");
+    expect(layout).not.toContain("@calcom/embed-react");
+    expect(bookingPage).toContain("BookingTabs");
+    expect(policy).toMatch(/script-src[^;]*https:\/\/app\.cal\.com/);
+    expect(policy).toMatch(/style-src[^;]*https:\/\/app\.cal\.com/);
+    expect(policy).toMatch(/img-src[^;]*https:\/\/app\.cal\.com[^;]*https:\/\/cal\.com/);
+    expect(policy).toMatch(/connect-src[^;]*https:\/\/app\.cal\.com[^;]*https:\/\/api\.cal\.com[^;]*https:\/\/cal\.com/);
+    expect(policy).toMatch(/frame-src[^;]*https:\/\/app\.cal\.com[^;]*https:\/\/cal\.com/);
   });
 
-  it("does not surface raw Calendly or fetch exceptions to demo users", () => {
+  it("does not surface raw provider or fetch exceptions to demo users", () => {
     const bookingPage = readFileSync(path.join(process.cwd(), "app", "book-a-demo", "page.tsx"), "utf8");
 
-    expect(bookingPage).toContain('const message = "We could not open scheduling. Please try again.";');
     expect(bookingPage).toContain('const message = "We could not save your request. Please try again.";');
     expect(bookingPage).not.toContain("error instanceof Error ? error.message");
   });

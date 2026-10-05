@@ -15,8 +15,8 @@ type EventName =
   | "form_submit"
   | "form_success"
   | "form_error"
-  | "calendly_open"
-  | "calendly_event_scheduled"
+  | "booking_open"
+  | "booking_scheduled"
   | "demo_form_start"
   | "demo_form_submit"
   | "contact_submit"
@@ -77,12 +77,12 @@ export function trackFormError(formName: string, reason: string): void {
   track({ name: "form_error", properties: { form: formName, reason } });
 }
 
-export function trackCalendlyOpen(): void {
-  track({ name: "calendly_open" });
+export function trackBookingOpen(): void {
+  track({ name: "booking_open" });
 }
 
-export function trackCalendlyEventScheduled(): void {
-  track({ name: "calendly_event_scheduled" });
+export function trackBookingScheduled(): void {
+  track({ name: "booking_scheduled" });
 }
 
 export function trackDemoFormStart(): void {
