@@ -1,10 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Container, Section, Heading } from "@/components/ui";
 import { ScrollReveal } from "@/components/animations";
 import type { PipelineStep } from "@/types";
-import { useBufferedAutoplay } from "@/hooks/use-buffered-autoplay";
 
 interface PipelineProps {
   steps: PipelineStep[];
@@ -14,32 +13,24 @@ interface PipelineProps {
 
 export function Pipeline({ steps, align = "left", showDetails = false }: PipelineProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
-  const hasLoadedRef = useRef(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const video = videoRef.current;
-    if (!video || hasLoadedRef.current) return;
+    if (!video) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting || hasLoadedRef.current) return;
-        hasLoadedRef.current = true;
-        setShouldLoad(true);
-        observer.disconnect();
-      },
-      { rootMargin: "300px" },
-    );
+    const attemptPlayback = () => {
+      void video.play().catch(() => {});
+    };
 
-    observer.observe(video);
-    return () => observer.disconnect();
+    video.addEventListener("loadeddata", attemptPlayback);
+    video.addEventListener("canplay", attemptPlayback);
+    attemptPlayback();
+
+    return () => {
+      video.removeEventListener("loadeddata", attemptPlayback);
+      video.removeEventListener("canplay", attemptPlayback);
+    };
   }, []);
-
-  useBufferedAutoplay(videoRef, {
-    enabled: shouldLoad,
-    src: "https://media.articog.com/videos/backgrounds/WA-01.mp4",
-    waitForBuffer: false,
-  });
 
   return (
     <Section id="pipeline" className="relative flex min-h-[min(100svh,56.25vw)] items-center overflow-hidden" style={{ padding: 0 }}>
@@ -47,11 +38,13 @@ export function Pipeline({ steps, align = "left", showDetails = false }: Pipelin
       <div className="absolute inset-0 z-0 bg-black">
         <video
           ref={videoRef}
+          src="https://media.articog.com/videos/backgrounds/WA-01.mp4"
+          autoPlay
           muted
           playsInline
           loop
           controls={false}
-          preload="none"
+          preload="auto"
           poster="/pipeline-poster.jpg"
           className="h-full w-full object-cover"
           aria-hidden="true"

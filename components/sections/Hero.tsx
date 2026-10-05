@@ -1,10 +1,9 @@
 "use client";
 
 import type { HeroContent } from "@/types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { Heading } from "@/components/ui";
-import { useBufferedAutoplay } from "@/hooks/use-buffered-autoplay";
 
 interface HeroProps {
   content: HeroContent;
@@ -12,58 +11,26 @@ interface HeroProps {
 
 export function Hero({ content }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
   ReactDOM.preload("/hero-poster.jpg", { as: "image", fetchPriority: "high" });
 
   useEffect(() => {
-    const connection = (navigator as Navigator & {
-      connection?: { saveData?: boolean; effectiveType?: string };
-    }).connection;
-    const isSlowConnection = connection?.saveData ||
-      connection?.effectiveType === "slow-2g" ||
-      connection?.effectiveType === "2g";
+    const video = videoRef.current;
+    if (!video) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || isSlowConnection) return;
-
-    let idleHandle: number | undefined;
-    let fallbackTimer: number | undefined;
-    const startWhenIdle = () => {
-      const requestIdle = window.requestIdleCallback?.bind(window);
-      if (requestIdle) {
-        idleHandle = requestIdle(() => setShouldLoadVideo(true), { timeout: 3000 });
-      } else {
-        fallbackTimer = window.setTimeout(() => setShouldLoadVideo(true), 1500);
-      }
+    const attemptPlayback = () => {
+      void video.play().catch(() => {});
     };
 
-    if (document.readyState === "complete") startWhenIdle();
-    else window.addEventListener("load", startWhenIdle, { once: true });
+    video.addEventListener("loadeddata", attemptPlayback);
+    video.addEventListener("canplay", attemptPlayback);
+    attemptPlayback();
 
     return () => {
-      window.removeEventListener("load", startWhenIdle);
-      if (idleHandle !== undefined) {
-        window.cancelIdleCallback?.(idleHandle);
-      }
-      if (fallbackTimer !== undefined) window.clearTimeout(fallbackTimer);
+      video.removeEventListener("loadeddata", attemptPlayback);
+      video.removeEventListener("canplay", attemptPlayback);
     };
   }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !shouldLoadVideo) return;
-
-    const src = "https://media.articog.com/videos/backgrounds/WA-03.mp4";
-    const nextSrc = new URL(src, window.location.href).toString();
-    if (video.currentSrc === nextSrc || video.getAttribute("src") === src) return;
-    video.setAttribute("src", src);
-  }, [shouldLoadVideo]);
-
-  useBufferedAutoplay(videoRef, {
-    enabled: shouldLoadVideo,
-    keepPlaying: true,
-    waitForBuffer: false,
-  });
 
   return (
     <section
@@ -75,18 +42,14 @@ export function Hero({ content }: HeroProps) {
       {/* Background Video */}
       <div className="absolute inset-0 z-0 bg-black">
         <video
-          ref={(video) => {
-            videoRef.current = video;
-            if (video) {
-              video.defaultMuted = true;
-              video.muted = true;
-            }
-          }}
+          ref={videoRef}
+          src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
+          autoPlay
           muted
           playsInline
           loop
           controls={false}
-          preload="none"
+          preload="auto"
           poster="/hero-poster.jpg"
           className="absolute inset-0 h-full w-full object-cover object-center"
           aria-hidden="true"
