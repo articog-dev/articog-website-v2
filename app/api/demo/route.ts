@@ -157,11 +157,12 @@ async function handleDemoRequest(request: Request, requestId: string, idempotenc
     },
   };
 
+  const submittedAt = new Date().toISOString();
   const durableResult = await saveLead({
     id: `demo-${fingerprint.digest}`,
     type: "demo",
     source: "website",
-    submittedAt: new Date().toISOString(),
+    submittedAt,
     fields: lead,
   }, { requestId });
   if (!durableResult.ok) {
@@ -196,15 +197,18 @@ async function handleDemoRequest(request: Request, requestId: string, idempotenc
     logOperational("error", "sheets_mirror_failed", { requestId, route: "demo", operation: "demo-sheets-mirror", errorName: error instanceof Error ? error.name : "unknown-error", result: "failure", durationMs: Date.now() - mirrorStartedAt });
   }
 
-  const recipient = process.env.CONTACT_INTERNAL_ALERT_EMAIL || "info@articog.com";
+  const recipient = process.env.LEAD_NOTIFICATION_EMAIL || "info@articog.com";
 
   try {
     const result = await sendResendEmail("demo-internal-notification", {
       to: recipient,
       subject: "New demo request | Articog",
       text: [
-        "New demo request saved.",
+        "Lead type: Book a Demo",
+        `Submission timestamp: ${submittedAt}`,
         "",
+        `First name: ${lead.firstName}`,
+        `Last name: ${lead.lastName}`,
         `Name: ${lead.name}`,
         `Email: ${lead.email}`,
         `Company: ${lead.company}`,
@@ -214,8 +218,13 @@ async function handleDemoRequest(request: Request, requestId: string, idempotenc
         `Timeline: ${lead.timeline}`,
         `Project context: ${lead.projectContext}`,
         `Reference / Website URL: ${lead.referenceUrl}`,
-        `Source: ${lead.attribution.source || ""}`,
-        `Referrer: ${lead.attribution.referrer || ""}`,
+        `Consent: ${lead.consent}`,
+        `Attribution: ${JSON.stringify(lead.attribution)}`,
+        "",
+        "Selected date: Not available at lead submission; selected in the following Cal.com step.",
+        "Selected time: Not available at lead submission; selected in the following Cal.com step.",
+        "Timezone: Determined by Cal.com when the booking is made.",
+        "Booking information: The Cal.com scheduling step follows this lead submission; appointment details are managed there.",
       ].join("\n"),
       replyTo: lead.email,
     }, { requestId, route: "demo" });

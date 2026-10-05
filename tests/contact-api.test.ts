@@ -11,6 +11,7 @@ describe("POST /api/contact", () => {
     process.env.GOOGLE_SHEETS_WEB_APP_URL = "https://sheets.test/submit";
     process.env.RESEND_API_KEY = "test-key";
     process.env.CONTACT_FROM_EMAIL = "noreply@example.com";
+    delete process.env.LEAD_NOTIFICATION_EMAIL;
     vi.restoreAllMocks();
     resetTestRateLimits();
     resetTestLeadStorage();
@@ -39,10 +40,16 @@ describe("POST /api/contact", () => {
     expect(buildContactPayload(formData).website).toBe("filled-honeypot");
   });
 
-  it("saves the lead and sends the internal notification to info@articog.com without exposing form data to analytics", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(new Response(null, { status: 200 }));
+  it("persists the complete contact lead before emailing the company", async () => {
+    const events: string[] = [];
+    const persisted: string[] = [];
+    setTestLeadStorage({
+      set: async (_key, value) => { events.push("redis"); persisted.push(value); return "OK"; },
+    });
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      events.push(input === "https://api.resend.com/emails" ? "email" : "sheets");
+      return new Response(JSON.stringify({ id: "email-id" }), { status: 200 });
+    });
 
     const response = await POST(
       new Request("http://localhost/api/contact", {
@@ -52,14 +59,30 @@ describe("POST /api/contact", () => {
           name: "Test User",
           email: "test@example.com",
           company: "Example Co",
+          companyWebsite: "https://example.com",
           inquiryType: "Sales",
           message: "Test message",
+          attribution: { source: "newsletter", campaign: "spring" },
         }),
       })
     );
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ success: true });
+    expect(persisted).toHaveLength(1);
+    const lead = JSON.parse(persisted[0]);
+    expect(lead.type).toBe("contact");
+    expect(lead.fields).toMatchObject({
+      name: "Test User",
+      email: "test@example.com",
+      company: "Example Co",
+      companyWebsite: "https://example.com",
+      inquiryType: "Sales",
+      message: "Test message",
+      attribution: { source: "newsletter", campaign: "spring" },
+    });
+    expect(new Date(lead.submittedAt).toISOString()).toBe(lead.submittedAt);
+    expect(events.indexOf("redis")).toBeLessThan(events.indexOf("email"));
     expect(fetchMock).toHaveBeenCalledTimes(3);
 
     const payloads = fetchMock.mock.calls.map(([input, init]) => ({
@@ -67,13 +90,23 @@ describe("POST /api/contact", () => {
       init,
     }));
 
-    const emailPayload = payloads.find((entry) =>
-      typeof entry.input === "string" && entry.input === "https://api.resend.com/emails"
-    );
+    const emailPayload = payloads.find((entry) => {
+      if (entry.input !== "https://api.resend.com/emails") return false;
+      return JSON.parse(String(entry.init?.body)).subject === "New contact form submission | Articog";
+    });
 
     expect(emailPayload).toBeDefined();
     const body = JSON.parse(String(emailPayload?.init?.body));
-    expect(body.to).toContain("info@articog.com");
+    expect(body.to).toEqual(["info@articog.com"]);
+    expect(body.text).toContain("Lead type: Contact Us");
+    expect(body.text).toContain(`Submission timestamp: ${lead.submittedAt}`);
+    expect(body.text).toContain("Name: Test User");
+    expect(body.text).toContain("Email: test@example.com");
+    expect(body.text).toContain("Company: Example Co");
+    expect(body.text).toContain("Company website: https://example.com");
+    expect(body.text).toContain("Inquiry type: Sales");
+    expect(body.text).toContain('Attribution: {"source":"newsletter","campaign":"spring"}');
+    expect(body.text).toContain("Test message");
   });
 
   it("returns a request ID and does not repeat processing for the same submission", async () => {
@@ -151,6 +184,10 @@ describe("POST /api/contact", () => {
 
   it("logs a failed non-blocking email notification without changing persisted-lead success", async () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const persisted: string[] = [];
+    setTestLeadStorage({
+      set: async (_key, value) => { persisted.push(value); return "OK"; },
+    });
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       if (input === "https://sheets.test/submit") return new Response(null, { status: 200 });
       if (input === "https://api.resend.com/emails") {
@@ -166,6 +203,8 @@ describe("POST /api/contact", () => {
     }));
 
     expect(response.status).toBe(200);
+    expect(persisted).toHaveLength(1);
+    expect(JSON.parse(persisted[0]).type).toBe("contact");
     expect(JSON.stringify(await response.json())).not.toContain("private");
     const entries = log.mock.calls.map(([entry]) => JSON.parse(String(entry)) as Record<string, unknown>);
     expect(entries).toEqual(expect.arrayContaining([

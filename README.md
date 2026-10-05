@@ -95,6 +95,7 @@ The contact form requires these server-side environment variables:
 - `GOOGLE_SHEETS_WEB_APP_URL` mirrors durably stored submissions to the existing Google Sheet.
 - `RESEND_API_KEY` enables confirmation and internal alert emails.
 - `CONTACT_FROM_EMAIL` is the verified sender address for those emails.
+- `LEAD_NOTIFICATION_EMAIL` receives Contact Us and Book a Demo notifications. It defaults to `info@articog.com`.
 - `CONTACT_INTERNAL_ALERT_EMAIL` receives an alert when saving to Google Sheets fails. It defaults to `articog.media.01@gmail.com` and can be overridden for deployment.
 
 Public form APIs use Upstash Redis for shared serverless rate limiting and durable lead storage. Configure:

@@ -16,7 +16,6 @@ type ContactData = {
 };
 
 const DEFAULT_INTERNAL_ALERT_EMAIL = "articog.media.01@gmail.com";
-const CONTACT_NOTIFICATION_EMAIL = "info@articog.com";
 async function alertSheetFailure(data: ContactData, error: unknown, requestId: string) {
   const recipient = process.env.CONTACT_INTERNAL_ALERT_EMAIL || DEFAULT_INTERNAL_ALERT_EMAIL;
 
@@ -133,11 +132,12 @@ export async function POST(request: Request) {
     }
     idempotencyKey = idempotency.key;
 
+    const submittedAt = new Date().toISOString();
     const lead = {
       id: `contact-${fingerprint.digest}`,
       type: "contact" as const,
       source: "website" as const,
-      submittedAt: new Date().toISOString(),
+      submittedAt,
       fields: {
         name: name.value,
         email: email.value,
@@ -186,16 +186,18 @@ export async function POST(request: Request) {
 
     try {
       const result = await sendResendEmail("contact-internal-notification", {
-        to: CONTACT_NOTIFICATION_EMAIL,
+        to: process.env.LEAD_NOTIFICATION_EMAIL || "info@articog.com",
         subject: "New contact form submission | Articog",
         text: [
-          "New contact form submission received.",
+          "Lead type: Contact Us",
+          `Submission timestamp: ${lead.submittedAt}`,
           "",
           `Name: ${name.value}`,
           `Email: ${email.value}`,
           `Company: ${company.value}`,
           `Company website: ${companyWebsite.value || ""}`,
           `Inquiry type: ${inquiryType.value}`,
+          `Attribution: ${JSON.stringify(attribution)}`,
           "",
           "Message:",
           message.value,

@@ -44,6 +44,7 @@ describe("public form API validation", () => {
     process.env.RESEND_API_KEY = "test-key";
     process.env.CONTACT_FROM_EMAIL = "noreply@example.com";
     process.env.PRIVACY_REQUEST_ALERT_EMAIL = "privacy@example.com";
+    delete process.env.LEAD_NOTIFICATION_EMAIL;
     vi.restoreAllMocks();
     resetTestRateLimits();
     resetTestLeadStorage();
@@ -51,13 +52,53 @@ describe("public form API validation", () => {
   });
 
   it("accepts a valid demo request and persists it", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 200 }));
+    const events: string[] = [];
+    const persisted: string[] = [];
+    setTestLeadStorage({
+      set: async (_key, value) => { events.push("redis"); persisted.push(value); return "OK"; },
+    });
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      events.push(input === "https://api.resend.com/emails" ? "email" : "sheets");
+      return new Response(JSON.stringify({ id: "email-id" }), { status: 200 });
+    });
 
     const response = await postDemo(request("/api/demo", validDemoPayload, "198.51.100.20"));
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ success: true });
     expect(fetchMock).toHaveBeenCalledWith("https://sheets.test/submit", expect.any(Object));
+    expect(persisted).toHaveLength(1);
+    const savedLead = JSON.parse(persisted[0]);
+    expect(savedLead.type).toBe("demo");
+    expect(savedLead.fields).toMatchObject(validDemoPayload);
+    expect(new Date(savedLead.submittedAt).toISOString()).toBe(savedLead.submittedAt);
+    expect(events.indexOf("redis")).toBeLessThan(events.indexOf("email"));
+
+    const notificationCall = fetchMock.mock.calls.find(([input, init]) =>
+      input === "https://api.resend.com/emails" &&
+      JSON.parse(String(init?.body)).subject === "New demo request | Articog",
+    );
+    expect(notificationCall).toBeDefined();
+    const notification = JSON.parse(String(notificationCall?.[1]?.body));
+    expect(notification.to).toEqual(["info@articog.com"]);
+    expect(notification.text).toContain("Lead type: Book a Demo");
+    expect(notification.text).toContain(`Submission timestamp: ${savedLead.submittedAt}`);
+    expect(notification.text).toContain("First name: Test");
+    expect(notification.text).toContain("Last name: User");
+    expect(notification.text).toContain("Email: test@example.com");
+    expect(notification.text).toContain("Company: Example Co");
+    expect(notification.text).toContain("Role: Marketing");
+    expect(notification.text).toContain("Service interest: Brand Film");
+    expect(notification.text).toContain("Budget: Under $5k");
+    expect(notification.text).toContain("Timeline: Immediately");
+    expect(notification.text).toContain("Project context: A short project.");
+    expect(notification.text).toContain("Reference / Website URL: https://example.com/reference");
+    expect(notification.text).toContain("Consent: true");
+    expect(notification.text).toContain('Attribution: {"source":"newsletter","medium":"email","campaign":"spring","content":"cta","term":"video","referrer":"https://example.com/previous"}');
+    expect(notification.text).toContain("Selected date: Not available at lead submission");
+    expect(notification.text).toContain("Selected time: Not available at lead submission");
+    expect(notification.text).toContain("Timezone: Determined by Cal.com");
+    expect(notification.text).toContain("Cal.com scheduling step follows this lead submission");
   });
 
   it("short-circuits demo honeypot submissions without persistence or integrations", async () => {
@@ -74,6 +115,10 @@ describe("public form API validation", () => {
 
   it("logs a failed best-effort demo notification after persistence", async () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const persisted: string[] = [];
+    setTestLeadStorage({
+      set: async (_key, value) => { persisted.push(value); return "OK"; },
+    });
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       if (input === "https://sheets.test/submit") return new Response(null, { status: 200 });
       return new Response(JSON.stringify({ error: { message: "private provider detail" } }), { status: 422 });
@@ -82,6 +127,8 @@ describe("public form API validation", () => {
     const response = await postDemo(request("/api/demo", validDemoPayload, "198.51.100.64"));
 
     expect(response.status).toBe(200);
+    expect(persisted).toHaveLength(1);
+    expect(JSON.parse(persisted[0]).type).toBe("demo");
     expect(JSON.stringify(await response.json())).not.toContain("private");
     const entries = log.mock.calls.map(([entry]) => JSON.parse(String(entry)) as Record<string, unknown>);
     expect(entries).toEqual(expect.arrayContaining([
