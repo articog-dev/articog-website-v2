@@ -40,7 +40,7 @@ export function BookingTabs({ prefill }: BookingTabsProps) {
 
   return (
     <div>
-      <div role="tablist" aria-label="Choose a booking team" className="mb-3 flex flex-wrap justify-center gap-2">
+      <div role="tablist" aria-label="Choose a booking team" className="mb-6 flex flex-wrap justify-center gap-3">
         {CAL_TEAMS.map((team, index) => {
           const isActive = team.id === activeTeamId;
           return (
@@ -55,7 +55,7 @@ export function BookingTabs({ prefill }: BookingTabsProps) {
               tabIndex={isActive ? 0 : -1}
               variant={isActive ? "secondary" : "outline"}
               size="sm"
-              className={`border type-small uppercase tracking-wide ${isActive ? "border-white bg-white text-black hover:bg-white/85" : "border-white/20 bg-transparent text-white hover:bg-white/[0.06]"}`}
+              className={`h-10 px-4 py-2 text-xs leading-none uppercase tracking-wide md:h-11 md:text-sm ${isActive ? "border-white bg-white text-black hover:bg-white/85" : "border-white/20 bg-transparent text-white hover:bg-white/[0.06]"}`}
               onClick={() => {
                 hasSelectedTeam.current = true;
                 setActiveTeamId(team.id);
