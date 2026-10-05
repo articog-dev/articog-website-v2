@@ -40,7 +40,7 @@ export function BookingTabs({ prefill }: BookingTabsProps) {
 
   return (
     <div>
-      <div role="tablist" aria-label="Choose a booking team" className="mb-6 flex flex-wrap justify-center gap-2">
+      <div role="tablist" aria-label="Choose a booking team" className="mb-3 flex flex-wrap justify-center gap-2">
         {CAL_TEAMS.map((team, index) => {
           const isActive = team.id === activeTeamId;
           return (

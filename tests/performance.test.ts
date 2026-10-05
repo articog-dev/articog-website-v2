@@ -17,6 +17,17 @@ describe("performance boundaries", () => {
     expect(analytics).toContain('strategy="afterInteractive"');
   });
 
+  it("lets the Cal.com embed set its own height without an inner scroll container", () => {
+    const embed = read("components", "booking", "CalEmbed.tsx");
+
+    expect(embed).toContain('style={{ width: "100%" }}');
+    expect(embed).toContain("min-h-[700px]");
+    expect(embed).not.toContain('height: "100%"');
+    expect(embed).not.toContain('overflow: "auto"');
+    expect(embed).not.toContain(" h-[700px]");
+    expect(embed).not.toContain("overflow-auto");
+  });
+
   it("keeps the poster-backed autoplay hero and lazy below-fold gallery loading", () => {
     const hero = read("components", "sections", "Hero.tsx");
     const gallery = read("components", "sections", "HomeVisualShowcase.tsx");

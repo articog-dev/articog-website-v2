@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@/components/ui/Link";
-import { Container, Button, Heading, PageHero, Input, Textarea, Checkbox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
+import { Container, Button, PageHero, Input, Textarea, Checkbox, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui";
 import { ArrowRight } from "lucide-react";
 import { BookingTabs } from "@/components/booking/BookingTabs";
 import { CAL_TEAMS, calPublicUrl } from "@/lib/cal";
@@ -120,17 +120,18 @@ export default function BookADemoPage() {
     >
       <Container>
         <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-[var(--spacing-title-gap)]">
-            <Heading as="h1" size="hero" className="text-white">
-              Tell us what your brand needs every month.
-            </Heading>
+          <div className="mb-6 text-center">
+            <h1
+              ref={scheduleHeadingRef}
+              id="booking-page-heading"
+              tabIndex={step === "schedule" ? -1 : undefined}
+              className="type-h1 text-white"
+            >
+              {step === "form" ? "Tell us what your brand needs every month." : "Pick a time that works for you"}
+            </h1>
           </div>
 
-          <section hidden={step !== "form"} aria-labelledby="project-first-heading">
-            <Heading id="project-first-heading" as="h2" size="section" className="mb-6 text-center text-white">
-              Prefer to tell us about your project first?
-            </Heading>
-
+          <section hidden={step !== "form"} aria-labelledby="booking-page-heading">
             <div
               className="rounded-2xl p-8 md:p-12"
               style={{
@@ -432,15 +433,7 @@ export default function BookADemoPage() {
           </section>
 
           {step === "schedule" && prefill ? (
-            <section aria-labelledby="pick-a-time-heading" className="scroll-mt-8">
-              <h2
-                ref={scheduleHeadingRef}
-                id="pick-a-time-heading"
-                tabIndex={-1}
-                className="type-h2 mb-3 text-center text-white focus-visible:outline-none"
-              >
-                Pick a time that works for you
-              </h2>
+            <section aria-labelledby="booking-page-heading" className="scroll-mt-8">
               <p className="mb-6 text-center type-small text-white/60">
                 Choose the team closest to your time zone. Times are shown in your local time.
               </p>

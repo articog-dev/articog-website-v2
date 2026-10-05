@@ -48,14 +48,14 @@ export function CalEmbed({ calLink, prefill }: CalEmbedProps) {
 
   return (
     <div
-      className="relative h-[700px] min-h-[700px] overflow-auto rounded-2xl border border-white/[0.06] bg-white/[0.02] p-2 md:p-4"
+      className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1 md:p-2"
       aria-busy={isLoading}
       data-cal-link={calLink}
     >
       <Cal
         namespace="demo"
         calLink={calLink}
-        style={{ width: "100%", height: "100%", overflow: "auto" }}
+        style={{ width: "100%" }}
         config={{
           layout: "month_view",
           theme: "dark",
@@ -65,13 +65,13 @@ export function CalEmbed({ calLink, prefill }: CalEmbedProps) {
         }}
       />
       {isLoading ? (
-        <div className="absolute inset-2 z-10 space-y-6 rounded-xl bg-black p-6 md:inset-4" aria-hidden="true">
+        <div className="min-h-[700px] space-y-6 rounded-xl bg-black p-6" aria-hidden="true">
           <div className="h-8 w-2/5 animate-pulse rounded bg-white/10" />
           <div className="grid grid-cols-2 gap-6">
             <div className="h-10 animate-pulse rounded bg-white/10" />
             <div className="h-10 animate-pulse rounded bg-white/10" />
           </div>
-          <div className="grid h-[560px] grid-cols-2 gap-6">
+          <div className="grid min-h-[560px] grid-cols-2 gap-6">
             <div className="animate-pulse rounded bg-white/[0.04]" />
             <div className="animate-pulse rounded bg-white/[0.04]" />
           </div>

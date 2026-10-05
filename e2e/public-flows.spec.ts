@@ -116,6 +116,25 @@ test.describe("contact flow", () => {
 });
 
 test.describe("book-a-demo flow", () => {
+  test("header and announcement links open the one-heading form step", async ({ page }) => {
+    await page.goto("/");
+
+    const links = [
+      page.locator(".site-header a[href='/book-a-demo']"),
+      page.locator(".announcement-bar a[href='/book-a-demo']"),
+    ];
+
+    for (const link of links) {
+      await expect(link).toHaveAttribute("href", "/book-a-demo");
+      await link.click();
+      await expect(page).toHaveURL(/\/book-a-demo$/);
+      await expect(page.locator("h1")).toHaveCount(1);
+      await expect(page.getByRole("heading", { level: 1, name: "Tell us what your brand needs every month." })).toBeVisible();
+      await expect(page.locator("#cal-booking-panel")).toHaveCount(0);
+      await page.goto("/");
+    }
+  });
+
   test("shows Cal.com scheduling only after demo submission and switches regional calendars", async ({ page }) => {
     await page.route("**/api/demo", async (route) => {
       await route.fulfill({
@@ -126,14 +145,17 @@ test.describe("book-a-demo flow", () => {
     });
 
     await page.goto("/book-a-demo");
-    await expect(page.getByRole("heading", { name: "Tell us what your brand needs every month." })).toBeVisible();
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.getByRole("heading", { level: 1, name: "Tell us what your brand needs every month." })).toBeVisible();
     await expect(page.locator("#cal-booking-panel")).toHaveCount(0);
-    await expect(page.locator("#project-first-heading")).toBeVisible();
+    await expect(page.locator("main form")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Prefer to tell us about your project first?" })).toHaveCount(0);
 
     await fillDemoForm(page);
     await page.getByRole("button", { name: "Continue to Scheduling" }).click();
-    await expect(page.getByRole("heading", { name: "Pick a time that works for you" })).toBeVisible();
-    await expect(page.locator("#project-first-heading")).toBeHidden();
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.getByRole("heading", { level: 1, name: "Pick a time that works for you" })).toBeVisible();
+    await expect(page.locator("main form")).toBeHidden();
 
     const indiaTab = page.getByRole("tab", { name: "India / Middle East Team" });
     const americasTab = page.getByRole("tab", { name: "Americas Team" });
