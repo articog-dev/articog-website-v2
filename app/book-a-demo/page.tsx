@@ -116,19 +116,26 @@ export default function BookADemoPage() {
     <PageHero
       id="book-a-demo"
       contentOnly
-      className="bg-black min-h-screen"
+      className={`bg-black min-h-screen ${step === "schedule" ? "!pt-6 md:!pt-8" : ""}`}
     >
       <Container>
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-6 text-center">
+        <div className={`mx-auto w-full ${step === "form" ? "max-w-3xl" : "max-w-5xl"}`}>
+          <div className={`${step === "form" ? "mb-6" : "mb-4"} text-center`}>
             <h1
               ref={scheduleHeadingRef}
               id="booking-page-heading"
               tabIndex={step === "schedule" ? -1 : undefined}
-              className="type-h1 text-white"
+              className={step === "form"
+                ? "type-h1 text-white"
+                : "scroll-mt-[calc(var(--header-offset)+1rem)] text-3xl font-semibold leading-tight text-white md:text-4xl"}
             >
               {step === "form" ? "Tell us what your brand needs every month." : "Pick a time that works for you"}
             </h1>
+            {step === "schedule" ? (
+              <p className="mx-auto mt-2 max-w-2xl text-sm text-white/60">
+                Choose the team closest to your time zone. Times are shown in your local time.
+              </p>
+            ) : null}
           </div>
 
           <section hidden={step !== "form"} aria-labelledby="booking-page-heading">
@@ -433,10 +440,7 @@ export default function BookADemoPage() {
           </section>
 
           {step === "schedule" && prefill ? (
-            <section aria-labelledby="booking-page-heading" className="scroll-mt-8">
-              <p className="mb-6 text-center type-small text-white/60">
-                Choose the team closest to your time zone. Times are shown in your local time.
-              </p>
+            <section aria-labelledby="booking-page-heading" className="scroll-mt-4">
               <BookingTabs prefill={prefill} />
               <div className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 type-small text-white/55">
                 <button

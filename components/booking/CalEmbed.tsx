@@ -55,7 +55,7 @@ export function CalEmbed({ calLink, prefill }: CalEmbedProps) {
       <Cal
         namespace="demo"
         calLink={calLink}
-        style={{ width: "100%" }}
+        style={{ width: "100%", minHeight: 560 }}
         config={{
           layout: "month_view",
           theme: "dark",
@@ -65,13 +65,13 @@ export function CalEmbed({ calLink, prefill }: CalEmbedProps) {
         }}
       />
       {isLoading ? (
-        <div className="min-h-[700px] space-y-6 rounded-xl bg-black p-6" aria-hidden="true">
+        <div className="min-h-[560px] space-y-6 rounded-xl bg-black p-6" aria-hidden="true">
           <div className="h-8 w-2/5 animate-pulse rounded bg-white/10" />
           <div className="grid grid-cols-2 gap-6">
             <div className="h-10 animate-pulse rounded bg-white/10" />
             <div className="h-10 animate-pulse rounded bg-white/10" />
           </div>
-          <div className="grid min-h-[560px] grid-cols-2 gap-6">
+          <div className="grid min-h-[360px] grid-cols-2 gap-6">
             <div className="animate-pulse rounded bg-white/[0.04]" />
             <div className="animate-pulse rounded bg-white/[0.04]" />
           </div>

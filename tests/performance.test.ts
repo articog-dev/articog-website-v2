@@ -20,8 +20,8 @@ describe("performance boundaries", () => {
   it("lets the Cal.com embed set its own height without an inner scroll container", () => {
     const embed = read("components", "booking", "CalEmbed.tsx");
 
-    expect(embed).toContain('style={{ width: "100%" }}');
-    expect(embed).toContain("min-h-[700px]");
+    expect(embed).toContain('style={{ width: "100%", minHeight: 560 }}');
+    expect(embed).toContain("min-h-[560px]");
     expect(embed).not.toContain('height: "100%"');
     expect(embed).not.toContain('overflow: "auto"');
     expect(embed).not.toContain(" h-[700px]");
