@@ -4,6 +4,7 @@ import { Linkedin, Youtube, Instagram } from "lucide-react";
 import { Container } from "@/components/ui";
 import { FooterNavSections } from "./FooterNavSections";
 import { aiLinks } from "@/lib/ai-links";
+import { AskAiLink } from "./AskAiLink";
 
 function XIcon({ size = 16 }: { size?: number }) {
   return (
@@ -147,6 +148,10 @@ export function Footer() {
               <div className="flex items-center gap-2">
                 {aiLinks.map(({ label, href, Icon }) => {
                   const accessibleLabel = `Ask ${label} about Articog`;
+                  if (label === "Gemini") {
+                    return <AskAiLink key={label} href={href} />;
+                  }
+
                   return (
                     <a
                       key={label}

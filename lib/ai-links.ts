@@ -14,8 +14,8 @@ export const aiLinks = [
   { label: "ChatGPT", href: `https://chatgpt.com/?q=${q}`, Icon: ChatGPTIcon },
   { label: "Claude", href: `https://claude.ai/new?q=${q}`, Icon: ClaudeIcon },
   {
-    label: "Google (AI Mode)",
-    href: `https://www.google.com/search?udm=50&q=${q}`,
+    label: "Gemini",
+    href: "https://gemini.google.com/app",
     Icon: GeminiIcon,
   },
   {
