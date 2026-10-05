@@ -58,31 +58,7 @@ export const founders: FounderProfile[] = [
       "Her leadership is rooted in a decade-long track record of operational excellence and business scaling. At Govada Creations, she grew from an intern in 2013 to Vice President, mastering every facet of the business from coordination and social media direction to high-level strategic execution. This hands-on journey shaped her core business philosophy: keep things simple, sharp, and fiercely focused on execution.",
       "Uniquely equipped with a medical degree (MBBS) and a deep, ongoing interest in the intersection of the medical and business fields, Harika brings a physician's level of analytical problem-solving to the boardroom. This rare blend of clinical discipline and entrepreneurial vision allows her to navigate complex client portfolios and drive sustainable customer acquisition with precision and empathy.",
     ],
-    sections: [
-      {
-        title: "Experience",
-        items: [
-          "Articog, Co-Founder, Mar 2025 to Present",
-          "Govada Creations, Vice President, Oct 2022 to Present",
-          "Govada Creations, Social Media Director, Mar 2020 to Present",
-          "Govada Creations, Activities Coordinator, Feb 2014 to Present",
-          "Govada Creations, Intern, 2013 to 2014",
-          "Clinical Observer, Chelsea and Westminster Hospital NHS Foundation Trust, Jun 2025 to Jul 2025",
-          "Duty Medical Officer, Sri Sai Balaji Hospital, Nov 2022 to Mar 2023",
-          "Clinical Observer, Mid and South Essex NHS Foundation Trust, Jun 2025 to Jul 2025",
-        ],
-      },
-      {
-        title: "Education",
-        paragraphs: [
-          "Kamineni Academy of Medical Sciences and Research Centre\nBachelor of Medicine, Bachelor of Surgery (MBBS), 2016 to 2022",
-        ],
-      },
-      {
-        title: "Skills",
-        paragraphs: ["Video Production • Analytic Problem Solving"],
-      },
-    ],
+    sections: [],
     linkedin: "https://www.linkedin.com/in/dr-harika-govada/",
   },
 ];
