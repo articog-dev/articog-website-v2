@@ -4,11 +4,13 @@ import { Link } from "@/components/ui/Link";
 
 export function AnnouncementBar() {
   return (
-    <div className="announcement-bar fixed inset-x-0 top-0 z-[1100] min-h-9 border-b border-white/10 bg-[#111] px-10 py-2 text-center text-[10px] font-medium leading-4 text-white/80 sm:px-10 sm:text-xs">
-      <span>Articog is open for pilot collaborations. </span>
-      <Link href="/book-a-demo" className="text-white underline underline-offset-4 transition hover:text-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-        Book a Demo →
-      </Link>
+    <div className="announcement-bar fixed inset-x-0 top-0 z-[1100] min-h-9 border-b border-white/10 bg-[#111] px-2 py-2 text-center text-[10px] font-medium leading-4 text-white/80 sm:px-10 sm:text-xs">
+      <div className="max-sm:overflow-hidden max-sm:whitespace-nowrap max-sm:pr-8 max-sm:text-[9px] max-[359px]:text-[8px]">
+        <span>Articog is open for pilot collaborations. </span>
+        <Link href="/book-a-demo" className="text-white underline underline-offset-4 transition hover:text-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+          Book a Demo →
+        </Link>
+      </div>
       <button
         type="button"
         aria-label="Close announcement"
