@@ -157,7 +157,7 @@ export function Footer() {
                       title={accessibleLabel}
                       className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06] text-white transition-colors hover:bg-white/[0.12]"
                     >
-                      <Icon size={16} />
+                      <Icon size={20} />
                     </a>
                   );
                 })}
