@@ -46,6 +46,14 @@ describe("AI assistant links", () => {
     expect(html).toContain("claude.svg");
     expect(html).not.toContain("gemini.svg");
 
+    const geminiLink = aiLinks.find(({ label }) => label === "Gemini");
+    const geminiHtml = renderToStaticMarkup(
+      createElement(AskAiLink, { href: geminiLink!.href, label: "Gemini" }),
+    );
+
+    expect(geminiHtml).toContain("gemini.svg");
+    expect(geminiHtml).not.toContain("claude.svg");
+
     const element = AskAiLink({ href: claudeLink!.href, label: "Claude" });
     expect(element.props.target).toBe("_blank");
     expect(element.props.rel).toBe("noopener noreferrer");

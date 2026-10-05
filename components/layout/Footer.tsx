@@ -154,8 +154,11 @@ export function Footer() {
               <div className="flex items-center gap-2">
                 {aiLinks.map(({ label, href, Icon }) => {
                   const accessibleLabel = `Ask ${label} about Articog`;
-                  if (label === "Gemini" || label === "Claude") {
-                    return <AskAiLink key={label} href={href} label={label} />;
+                  if (label === "Claude") {
+                    return <AskAiLink key={label} href={href} label="Claude" />;
+                  }
+                  if (label === "Gemini") {
+                    return <AskAiLink key={label} href={href} label="Gemini" />;
                   }
 
                   return (

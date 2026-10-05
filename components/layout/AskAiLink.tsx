@@ -12,7 +12,6 @@ interface AskAiLinkProps {
 
 export function AskAiLink({ href, label = "Gemini" }: AskAiLinkProps) {
   const accessibleLabel = `Ask ${label} about Articog`;
-  const Icon = label === "Claude" ? ClaudeIcon : GeminiIcon;
 
   const copyPrompt = async () => {
     try {
@@ -33,7 +32,11 @@ export function AskAiLink({ href, label = "Gemini" }: AskAiLinkProps) {
       onClick={() => { void copyPrompt(); }}
       className={FOOTER_ICON_BUTTON}
     >
-      <Icon size={FOOTER_ICON_SIZE} />
+      {label === "Claude" ? (
+        <ClaudeIcon size={FOOTER_ICON_SIZE} />
+      ) : (
+        <GeminiIcon size={FOOTER_ICON_SIZE} />
+      )}
     </a>
   );
 }
