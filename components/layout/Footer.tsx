@@ -5,8 +5,14 @@ import { Container } from "@/components/ui";
 import { FooterNavSections } from "./FooterNavSections";
 import { aiLinks } from "@/lib/ai-links";
 import { AskAiLink } from "./AskAiLink";
+import { FOOTER_ICON_BUTTON, FOOTER_ICON_SIZE } from "./footer-icon-styles";
 
-function XIcon({ size = 16 }: { size?: number }) {
+interface FooterSvgIconProps {
+  size?: number;
+  strokeWidth?: number;
+}
+
+function XIcon({ size = 16 }: FooterSvgIconProps) {
   return (
     <svg
       width={size}
@@ -20,7 +26,7 @@ function XIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-function MediumIcon({ size = 16 }: { size?: number }) {
+function MediumIcon({ size = 16 }: FooterSvgIconProps) {
   return (
     <svg
       width={size}
@@ -134,15 +140,15 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06] text-white transition-colors hover:bg-white/[0.12]"
+                  className={FOOTER_ICON_BUTTON}
                 >
-                  <s.Icon size={14} />
+                  <s.Icon size={FOOTER_ICON_SIZE} strokeWidth={1.75} />
                 </a>
               ))}
             </div>
 
-            <div className="space-y-3 pt-2">
-              <p className="type-small uppercase tracking-widest text-white/70">
+            <div className="space-y-2 pt-4">
+              <p className="text-xs uppercase tracking-widest text-white/70">
                 Ask about Articog on:
               </p>
               <div className="flex items-center gap-2">
@@ -160,9 +166,9 @@ export function Footer() {
                       rel="noopener noreferrer"
                       aria-label={accessibleLabel}
                       title={accessibleLabel}
-                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06] text-white transition-colors hover:bg-white/[0.12]"
+                      className={FOOTER_ICON_BUTTON}
                     >
-                      <Icon size={20} />
+                      <Icon size={FOOTER_ICON_SIZE} />
                     </a>
                   );
                 })}

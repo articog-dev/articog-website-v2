@@ -2,6 +2,7 @@
 
 import { toast } from "sonner";
 import { GeminiIcon } from "./AiIcons";
+import { FOOTER_ICON_BUTTON, FOOTER_ICON_SIZE } from "./footer-icon-styles";
 import { ARTICOG_AI_PROMPT } from "@/lib/ai-links";
 
 interface AskAiLinkProps {
@@ -26,9 +27,9 @@ export function AskAiLink({ href }: AskAiLinkProps) {
       aria-label="Ask Gemini about Articog"
       title="Ask Gemini about Articog"
       onClick={() => { void copyPrompt(); }}
-      className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06] text-white transition-colors hover:bg-white/[0.12]"
+      className={FOOTER_ICON_BUTTON}
     >
-      <GeminiIcon size={20} />
+      <GeminiIcon size={FOOTER_ICON_SIZE} />
     </a>
   );
 }
