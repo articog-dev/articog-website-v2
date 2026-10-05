@@ -120,7 +120,7 @@ export default function BookADemoPage() {
     >
       <Container>
         <div className={`mx-auto w-full ${step === "form" ? "max-w-3xl" : "max-w-5xl"}`}>
-          <div className={`${step === "form" ? "mb-6" : "mb-0"} text-center`}>
+          <div className={`${step === "form" ? "mb-[var(--spacing-title-gap)]" : "mb-0"} text-center`}>
             <h1
               ref={scheduleHeadingRef}
               id="booking-page-heading"
