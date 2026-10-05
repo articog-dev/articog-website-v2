@@ -1,4 +1,6 @@
+import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
 import { AskAiLink } from "../components/layout/AskAiLink";
 import { ARTICOG_AI_PROMPT, aiLinks } from "../lib/ai-links";
 
@@ -22,7 +24,7 @@ describe("AI assistant links", () => {
     });
   });
 
-  it("copies the shared Articog prompt when Claude is clicked and opens the Claude app without a q parameter", async () => {
+  it("copies the shared Articog prompt when Claude is clicked and renders the Claude icon without a q parameter", async () => {
     const claudeLink = aiLinks.find(({ label }) => label === "Claude");
 
     expect(claudeLink).toBeDefined();
@@ -35,7 +37,16 @@ describe("AI assistant links", () => {
       configurable: true,
     });
 
-    const element = AskAiLink({ href: claudeLink!.href });
+    const html = renderToStaticMarkup(
+      createElement(AskAiLink, { href: claudeLink!.href, label: "Claude" }),
+    );
+
+    expect(html).toContain("https://claude.ai/new");
+    expect(html).toContain("Ask Claude about Articog");
+    expect(html).toContain("claude.svg");
+    expect(html).not.toContain("gemini.svg");
+
+    const element = AskAiLink({ href: claudeLink!.href, label: "Claude" });
     expect(element.props.target).toBe("_blank");
     expect(element.props.rel).toBe("noopener noreferrer");
 

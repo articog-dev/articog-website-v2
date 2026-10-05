@@ -1,21 +1,25 @@
 "use client";
 
 import { toast } from "sonner";
-import { GeminiIcon } from "./AiIcons";
+import { ClaudeIcon, GeminiIcon } from "./AiIcons";
 import { FOOTER_ICON_BUTTON, FOOTER_ICON_SIZE } from "./footer-icon-styles";
 import { ARTICOG_AI_PROMPT } from "@/lib/ai-links";
 
 interface AskAiLinkProps {
   href: string;
+  label?: "Claude" | "Gemini";
 }
 
-export function AskAiLink({ href }: AskAiLinkProps) {
+export function AskAiLink({ href, label = "Gemini" }: AskAiLinkProps) {
+  const accessibleLabel = `Ask ${label} about Articog`;
+  const Icon = label === "Claude" ? ClaudeIcon : GeminiIcon;
+
   const copyPrompt = async () => {
     try {
       await navigator.clipboard.writeText(ARTICOG_AI_PROMPT);
-      toast.success("Prompt copied, paste it in Gemini");
+      toast.success(`Prompt copied, paste it in ${label}`);
     } catch {
-      // Clipboard access may be unavailable; allow the Gemini link to open normally.
+      // Clipboard access may be unavailable; allow the AI link to open normally.
     }
   };
 
@@ -24,12 +28,12 @@ export function AskAiLink({ href }: AskAiLinkProps) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Ask Gemini about Articog"
-      title="Ask Gemini about Articog"
+      aria-label={accessibleLabel}
+      title={accessibleLabel}
       onClick={() => { void copyPrompt(); }}
       className={FOOTER_ICON_BUTTON}
     >
-      <GeminiIcon size={FOOTER_ICON_SIZE} />
+      <Icon size={FOOTER_ICON_SIZE} />
     </a>
   );
 }

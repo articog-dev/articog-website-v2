@@ -155,7 +155,7 @@ export function Footer() {
                 {aiLinks.map(({ label, href, Icon }) => {
                   const accessibleLabel = `Ask ${label} about Articog`;
                   if (label === "Gemini" || label === "Claude") {
-                    return <AskAiLink key={label} href={href} />;
+                    return <AskAiLink key={label} href={href} label={label} />;
                   }
 
                   return (
