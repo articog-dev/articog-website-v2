@@ -12,7 +12,7 @@ const q = encodeURIComponent(ARTICOG_AI_PROMPT);
 
 export const aiLinks = [
   { label: "ChatGPT", href: `https://chatgpt.com/?q=${q}`, Icon: ChatGPTIcon },
-  { label: "Claude", href: `https://claude.ai/new?q=${q}`, Icon: ClaudeIcon },
+  { label: "Claude", href: "https://claude.ai/new", Icon: ClaudeIcon },
   {
     label: "Gemini",
     href: "https://gemini.google.com/app",
