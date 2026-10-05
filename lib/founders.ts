@@ -50,14 +50,13 @@ export const founders: FounderProfile[] = [
     imageSrc: "/harika-govada.png.png",
     imageAlt: "Dr. Harika Govada",
     circular: true,
-    roleLines: ["MD & Co-Founder, Articog"],
-    metaLines: [
-      "MD & Co-founder | Creative AI Production | Brand Storytelling | Video Production, Creative automation",
-      "Hyderabad, Telangana, India",
+    roleLines: [
+      "MD & Co-Founder, Articog | Driving Business Growth & Client Success in AI-Led Creative Production",
     ],
     paragraphs: [
-      "Building AI-led creative production systems at Articog | MD & Co-founder",
-      "Background in the creative field through Govada Creations, growing from intern to leadership over the years. Focused on execution, scale, and keeping things simple and sharp.",
+      "Dr. Harika Govada is the Managing Director and Co-Founder of Articog, where she leads business development, client management, and strategic growth. Passionate about building AI-led creative production systems, she specializes in engaging with clients to identify their core challenges and delivering sharp, scalable, and automated creative solutions. By bridging the gap between innovative technology and real-world brand storytelling, Harika ensures that Articog’s clients achieve measurable business impact.",
+      "Her leadership is rooted in a decade-long track record of operational excellence and business scaling. At Govada Creations, she grew from an intern in 2013 to Vice President, mastering every facet of the business from coordination and social media direction to high-level strategic execution. This hands-on journey shaped her core business philosophy: keep things simple, sharp, and fiercely focused on execution.",
+      "Uniquely equipped with a medical degree (MBBS) and a deep, ongoing interest in the intersection of the medical and business fields, Harika brings a physician's level of analytical problem-solving to the boardroom. This rare blend of clinical discipline and entrepreneurial vision allows her to navigate complex client portfolios and drive sustainable customer acquisition with precision and empathy.",
     ],
     sections: [
       {
