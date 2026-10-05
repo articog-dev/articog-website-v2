@@ -3,26 +3,44 @@ import { Heading } from "@/components/ui";
 import type { FounderProfile as FounderProfileData } from "@/lib/founders";
 
 export function FounderProfile({ founder }: { founder: FounderProfileData }) {
+  const isCircularProfile = founder.circular === true;
+
   return (
-    <article className="grid grid-gap-loose border-t border-white/[0.08] pt-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
+    <article
+      className={`grid grid-gap-loose border-t border-white/[0.08] pt-10 ${
+        isCircularProfile
+          ? "items-start lg:grid-cols-[18rem_minmax(0,1fr)]"
+          : "lg:grid-cols-[16rem_minmax(0,1fr)]"
+      }`}
+    >
       <div
-        className={`mx-auto w-full max-w-xs overflow-hidden border border-white/[0.08] bg-white/[0.02] lg:mx-0 ${founder.circular ? "rounded-full bg-black" : "rounded-2xl"}`}
+        className={`mx-auto w-full overflow-hidden border border-white/[0.08] bg-white/[0.02] lg:mx-0 ${
+          isCircularProfile
+            ? "aspect-square max-w-[18rem] self-start rounded-full bg-black"
+            : "max-w-xs rounded-2xl"
+        }`}
       >
         <Image
           src={founder.imageSrc}
           alt={founder.imageAlt}
           width={603}
           height={603}
-          className={`h-auto w-full ${founder.circular ? "rounded-full" : ""}`}
-          sizes="(max-width: 1023px) min(calc(100vw - 3rem), 20rem), 16rem"
+          className={isCircularProfile ? "h-full w-full rounded-full object-cover" : "h-auto w-full"}
+          sizes={isCircularProfile
+            ? "(max-width: 1023px) min(calc(100vw - 3rem), 18rem), 18rem"
+            : "(max-width: 1023px) min(calc(100vw - 3rem), 20rem), 16rem"}
         />
       </div>
-      <div className="space-y-8 text-[1.05rem] leading-[1.9] text-white/60">
+      <div className={`min-w-0 text-[1.05rem] leading-[1.9] text-white/60 ${isCircularProfile ? "space-y-6 text-center" : "space-y-8"}`}>
         <div className="text-center">
-          <Heading as="h2" size="section" className="mb-3 text-white">
+          <Heading
+            as="h2"
+            size="section"
+            className={isCircularProfile ? "mb-2 text-white" : "mb-3 text-white"}
+          >
             {founder.name}
           </Heading>
-          <p>
+          <p className={isCircularProfile ? "mx-auto max-w-[58ch] text-base font-medium leading-relaxed text-white/70" : undefined}>
             {founder.roleLines.map((line) => (
               <span key={line} className="block">
                 {line}
@@ -36,11 +54,21 @@ export function FounderProfile({ founder }: { founder: FounderProfileData }) {
           ))}
         </div>
 
-        {founder.paragraphs.map((paragraph) => (
-          <p key={paragraph} className="whitespace-pre-line">
-            {paragraph}
-          </p>
-        ))}
+        {isCircularProfile ? (
+          <div className="mx-auto max-w-[58ch] space-y-5">
+            {founder.paragraphs.map((paragraph) => (
+              <p key={paragraph} className="whitespace-pre-line">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        ) : (
+          founder.paragraphs.map((paragraph) => (
+            <p key={paragraph} className="whitespace-pre-line">
+              {paragraph}
+            </p>
+          ))
+        )}
 
         {founder.sections.map((section) => (
           <div key={section.title} className="space-y-4">

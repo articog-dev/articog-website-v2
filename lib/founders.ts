@@ -22,26 +22,17 @@ export const founders: FounderProfile[] = [
     imageSrc: "/sai-teja-inampudi.png",
     imageAlt: "Sai Teja Inampudi",
     roleLines: [
-      "CEO & Founder, Articog, AI-Native Film & Production Company",
-      "Co-Founder, AFIN (AI Film India Network)",
+      "CEO and Founder, Articog | Founder, AI Film India Network (AFIN) | Bridging Generative AI and Visual Storytelling",
     ],
     paragraphs: [
-      "Sai Teja Inampudi is the CEO & Founder of Articog, an AI-native film and production company building next-generation creative workflows for brands, agencies, and marketing teams. He is also the Co-Founder of AFIN (AI Film India Network), a community bringing together AI filmmakers and creative professionals. He works at the intersection of generative AI, filmmaking, creative direction, visual storytelling, and technology, with a focus on transforming how commercials, brand films, product content, and cinematic experiences are produced.",
+      "Sai Teja Inampudi is the CEO and Founder of Articog, a pioneering AI native film and creative production company that is fundamentally rewriting how modern marketing teams and growth stage brands scale their creative output.",
+      "His journey as a builder and leader began early. Driven by a strong interest in entrepreneurship, he founded an NGO called Aara Learn during his college days, taking on multiple organizing and leadership roles. This early entrepreneurial drive naturally merged with his continuous, lifelong passion for technology and traditional filmmaking.",
+      "Operating at the dynamic intersection of generative AI and the visual arts, Sai Teja analyzed a critical bottleneck in the industry. He recognized that brands could drastically improve their creative output by integrating new technology directly into their workflows, and he started building Articog to solve this exact problem.",
+      "Today, he leads the development of next generation production pipelines that fuse cutting edge AI with expert human storytelling, editing, and sound design. Under his leadership, Articog acts as a dedicated AI production studio, enabling brands to produce commercials, brand films, and social content at an unprecedented pace, moving from brief to deliverable in a matter of days.",
+      "Beyond his work at Articog, Sai Teja is the Co Founder of the AI Film India Network (AFIN), a thriving community dedicated to uniting AI filmmakers and creative professionals. His commitment to community building ensures that India remains at the forefront of the global creative AI industry.",
+      "Sai Teja brings a deeply multidisciplinary background to his leadership, encompassing creative technology, UI/UX and visual design, video editing, and entrepreneurship. Because his technical acumen is built on a foundational love for film, he is uniquely equipped to design workflows that eliminate production bottlenecks while fiercely protecting a brand's visual identity, story arc, and final cinematic quality. Whether he is shaping the creative direction for a complex product launch or guiding startup teams, Sai Teja is defined by his relentless curiosity and his drive to build the future of cinematic experiences.",
     ],
-    sections: [
-      {
-        title: "Experience",
-        paragraphs: [
-          "Sai Teja has a multidisciplinary background across AI filmmaking, creative technology, visual design, video production, editing, UI/UX, and entrepreneurship. At Articog, he leads the development of AI-native production pipelines combining generative AI with human creative direction, storytelling, editing, sound, and post-production. His experience also includes leadership in technology and creative communities, cultural production, startup projects, and team building.",
-        ],
-      },
-      {
-        title: "Core Areas",
-        paragraphs: [
-          "AI Filmmaking • Generative AI • Creative Direction • Brand & Commercial Films • AI Video Production • Visual Storytelling • Creative Technology • Video Editing & Post-Production • UI/UX & Visual Design • Startup Leadership • Creative Production Workflows",
-        ],
-      },
-    ],
+    sections: [],
     linkedin: "https://www.linkedin.com/in/-saitejainampudi/",
   },
   {
