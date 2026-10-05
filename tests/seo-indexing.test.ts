@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
+import robots from "../app/robots";
 import sitemap from "../app/sitemap";
 
 describe("technical SEO and indexing", () => {
@@ -95,12 +96,44 @@ describe("technical SEO and indexing", () => {
     });
   });
 
-  it("does not block essential crawlers or public route access in robots.txt", () => {
-    const robotsSource = readFileSync(path.join(process.cwd(), "app", "robots.ts"), "utf8");
+  it("allows AI search crawlers while excluding APIs and thank-you pages", () => {
+    const config = robots();
+    const rules = Array.isArray(config.rules) ? config.rules : [config.rules];
+    const userAgents = [
+      "GPTBot",
+      "OAI-SearchBot",
+      "ChatGPT-User",
+      "ClaudeBot",
+      "Claude-User",
+      "Claude-SearchBot",
+      "anthropic-ai",
+      "PerplexityBot",
+      "Perplexity-User",
+      "Google-Extended",
+      "Googlebot",
+      "Bingbot",
+    ];
 
-    expect(robotsSource).toContain('userAgent: "*"');
-    expect(robotsSource).toContain('allow: ["/"]');
-    expect(robotsSource).toContain('sitemap: "https://www.articog.com/sitemap.xml"');
-    expect(robotsSource).not.toContain("disallow");
+    expect(config.sitemap).toBe("https://www.articog.com/sitemap.xml");
+    expect(rules.find((rule) => rule.userAgent === "*")).toMatchObject({
+      userAgent: "*",
+      allow: ["/"],
+    });
+    for (const userAgent of userAgents) {
+      expect(rules.find((rule) => rule.userAgent === userAgent)).toEqual({
+        userAgent,
+        allow: ["/"],
+        disallow: ["/api/", "/thank-you"],
+      });
+    }
+  });
+
+  it("keeps llms.txt aligned with the current service offering", () => {
+    const llmsSource = readFileSync(path.join(process.cwd(), "public", "llms.txt"), "utf8");
+
+    expect(llmsSource).toContain("AI video production");
+    expect(llmsSource).toContain("ad creative");
+    expect(llmsSource).toContain("social creative");
+    expect(llmsSource).toContain("https://www.articog.com/services");
   });
 });

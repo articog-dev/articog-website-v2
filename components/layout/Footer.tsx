@@ -3,6 +3,7 @@ import { Link } from "@/components/ui/Link";
 import { Linkedin, Youtube, Instagram } from "lucide-react";
 import { Container } from "@/components/ui";
 import { FooterNavSections } from "./FooterNavSections";
+import { aiLinks } from "@/lib/ai-links";
 
 function XIcon({ size = 16 }: { size?: number }) {
   return (
@@ -137,6 +138,30 @@ export function Footer() {
                   <s.Icon size={14} />
                 </a>
               ))}
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <p className="type-small uppercase tracking-widest text-white/70">
+                Ask about Articog on:
+              </p>
+              <div className="flex items-center gap-2">
+                {aiLinks.map(({ label, href, Icon }) => {
+                  const accessibleLabel = `Ask ${label} about Articog`;
+                  return (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={accessibleLabel}
+                      title={accessibleLabel}
+                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06] text-white transition-colors hover:bg-white/[0.12]"
+                    >
+                      <Icon size={16} />
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
 

@@ -1,6 +1,12 @@
 Company name: Articog
-Description: Articog is an AI Native Film & Production Company producing brand films, commercials, performance creative, creator-style social content, product visuals, and audio for growth-stage brands.
-Primary Website URL: https://articog.com
+Description: Articog is an AI-native film and creative production company offering AI video production, ad creative, social creative, product visuals, creative strategy, audio, and post-production for growth-stage brands.
+Primary Website URL: https://www.articog.com
+
+Current Services:
+- AI Video Production: https://www.articog.com/services/ai-video-production
+- Ad Creative: https://www.articog.com/services/ad-creative
+- Social Creative: https://www.articog.com/services/social-creative
+- Services overview: https://www.articog.com/services
 
 Key Canonical Pages:
 - Home: https://articog.com
