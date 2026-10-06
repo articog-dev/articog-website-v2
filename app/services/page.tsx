@@ -339,7 +339,17 @@ export default function ServicesPage() {
         media={
           <>
             <LazyVideo
-              src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
+              sources={[
+                {
+                  src: "https://media.articog.com/videos/backgrounds/WA-03-mobile.mp4",
+                  media: "(max-width: 767px)",
+                  type: "video/mp4",
+                },
+                {
+                  src: "https://media.articog.com/videos/backgrounds/WA-03.mp4",
+                  type: "video/mp4",
+                },
+              ]}
               poster="/hero-poster.jpg"
               autoPlay
               muted

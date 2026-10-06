@@ -20,8 +20,10 @@ export function LazyVideo({
   ...props
 }: LazyVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sourcesRef = useRef(sources);
   const [shouldLoad, setShouldLoad] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
+  const [activeSources, setActiveSources] = useState<LazyVideoSource[]>();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -40,6 +42,9 @@ export function LazyVideo({
     let fallbackTimer: number | undefined;
     let loadHandler: (() => void) | undefined;
     const loadWhenIdle = () => {
+      setActiveSources(sourcesRef.current?.filter((source) =>
+        !source.media || window.matchMedia(source.media).matches,
+      ));
       const requestIdle = window.requestIdleCallback?.bind(window);
       if (requestIdle) {
         idleHandle = requestIdle(() => setShouldLoad(true), { timeout: 3000 });
@@ -116,7 +121,7 @@ export function LazyVideo({
       onError={handleError}
     >
       {shouldLoad && !hasFailed
-        ? sources?.map((source) => <source key={`${source.src}-${source.media ?? "default"}`} {...source} />)
+        ? activeSources?.map((source) => <source key={`${source.src}-${source.media ?? "default"}`} {...source} />)
         : null}
     </video>
   );

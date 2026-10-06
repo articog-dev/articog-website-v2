@@ -85,7 +85,7 @@ export function OurApproach() {
           loop
           controls={false}
           preload="none"
-          poster={shouldLoad ? "/our-approach-poster.jpg" : undefined}
+          poster="/our-approach-poster.jpg"
           className="absolute inset-0 h-full w-full object-cover object-center"
           aria-hidden="true"
         />

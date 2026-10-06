@@ -399,6 +399,7 @@
   flex: 0 0 var(--item-w);
   width: var(--item-w);
   aspect-ratio: 3 / 4;
+  pointer-events: none;
   scroll-snap-align: center;
   transform-style: preserve-3d;
 }
@@ -412,7 +413,10 @@
   background: #111;
   overflow: hidden;
   cursor: pointer;
+  pointer-events: auto;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 34px 70px -28px rgba(0, 0, 0, 0.95);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .showcase-item[aria-current="true"] {
@@ -521,14 +525,85 @@
   backdrop-filter: blur(18px);
 }
 
-.showcase-lightbox img {
-  max-width: min(90vw, 62rem);
-  max-height: 88vh;
-  width: auto;
-  height: auto;
+.showcase-lightbox__content {
+  position: relative;
+  width: min(92vw, 62rem, 63vh);
+}
+
+.showcase-lightbox__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #080808;
+}
+
+.showcase-lightbox__thumbnail,
+.showcase-lightbox__image {
+  object-fit: cover;
+}
+
+.showcase-lightbox__thumbnail {
+  filter: blur(20px);
+  opacity: 0.8;
+  transform: scale(1.06);
+}
+
+.showcase-lightbox__image {
   object-fit: contain;
+  opacity: 0;
+  transition: opacity 180ms ease;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.75);
+}
+
+.showcase-lightbox__image.is-loaded {
+  opacity: 1;
+}
+
+.showcase-lightbox__step {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  color: white;
+  background: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.showcase-lightbox__step--previous {
+  left: 1rem;
+}
+
+.showcase-lightbox__step--next {
+  right: 1rem;
+}
+
+.showcase-lightbox__step:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.showcase-lightbox__counter {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  z-index: 2;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: white;
+  background: rgba(0, 0, 0, 0.68);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  transform: translateX(-50%);
 }
 
 .showcase-lightbox__close {
@@ -548,7 +623,6 @@
 
 @media (max-width: 640px) {
   .showcase-track {
-    --item-w: min(66vw, 15rem);
     gap: 1rem;
     padding-block: 2rem;
     perspective: 1100px;

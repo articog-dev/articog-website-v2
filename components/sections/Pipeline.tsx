@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Container, Section, Heading } from "@/components/ui";
 import { ScrollReveal } from "@/components/animations";
+import { useBufferedAutoplay } from "@/hooks/use-buffered-autoplay";
 import type { PipelineStep } from "@/types";
 
 interface PipelineProps {
@@ -13,24 +14,29 @@ interface PipelineProps {
 
 export function Pipeline({ steps, align = "left", showDetails = false }: PipelineProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const attemptPlayback = () => {
-      void video.play().catch(() => {});
-    };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldLoad(true);
+        observer.disconnect();
+      },
+      { rootMargin: "300px" },
+    );
 
-    video.addEventListener("loadeddata", attemptPlayback);
-    video.addEventListener("canplay", attemptPlayback);
-    attemptPlayback();
-
-    return () => {
-      video.removeEventListener("loadeddata", attemptPlayback);
-      video.removeEventListener("canplay", attemptPlayback);
-    };
+    observer.observe(video);
+    return () => observer.disconnect();
   }, []);
+
+  useBufferedAutoplay(videoRef, {
+    enabled: shouldLoad,
+    src: "https://media.articog.com/videos/backgrounds/WA-01.mp4",
+  });
 
   return (
     <Section id="pipeline" className="relative flex min-h-[min(100svh,56.25vw)] items-center overflow-hidden" style={{ padding: 0 }}>
@@ -38,13 +44,11 @@ export function Pipeline({ steps, align = "left", showDetails = false }: Pipelin
       <div className="absolute inset-0 z-0 bg-black">
         <video
           ref={videoRef}
-          src="https://media.articog.com/videos/backgrounds/WA-01.mp4"
-          autoPlay
           muted
           playsInline
           loop
           controls={false}
-          preload="auto"
+          preload="none"
           poster="/pipeline-poster.jpg"
           className="h-full w-full object-cover"
           aria-hidden="true"

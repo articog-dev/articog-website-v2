@@ -36,17 +36,22 @@ describe("media SEO metadata", () => {
   });
 
   it("keeps decorative home videos muted and hidden from assistive technology", () => {
-    const files = [
-      ["components", "sections", "Hero.tsx"],
-      ["components", "sections", "Pipeline.tsx"],
-    ];
+    const hero = read("components", "sections", "Hero.tsx");
+    const pipeline = read("components", "sections", "Pipeline.tsx");
+    const approach = read("components", "sections", "OurApproach.tsx");
 
-    for (const file of files) {
-      const source = read(...file);
+    for (const source of [hero, pipeline, approach]) {
       expect(source).toContain("<video");
       expect(source).toContain("muted");
       expect(source).toContain('aria-hidden="true"');
     }
+
+    expect(hero).toContain("autoPlay");
+    expect(pipeline).toContain('preload="none"');
+    expect(pipeline).toContain('poster="/pipeline-poster.jpg"');
+    expect(pipeline).toContain("useBufferedAutoplay");
+    expect(approach).toContain('poster="/our-approach-poster.jpg"');
+    expect(approach).toContain("useBufferedAutoplay");
 
     const lazyVideo = read("components", "ui", "LazyVideo.tsx");
     expect(lazyVideo).toContain("<video");

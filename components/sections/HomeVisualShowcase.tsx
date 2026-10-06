@@ -25,12 +25,25 @@ const FAR_SPACING = 0.4;
 const TILT_DEG = 44;
 const DEPTH_NEAR = 120;
 const DEPTH_FAR = 70;
+const CARD_SIZES = "(max-width: 640px) 70vw, min(max(24vw, 13rem), 21rem)";
+const LIGHTBOX_SIZES = "(max-width: 1024px) 92vw, min(90vw, 62rem)";
+const LIGHTBOX_DEVICE_SIZES = [320, 420, 640, 768, 1024, 1200, 1440, 1920, 2560];
+
+function getLightboxPreloadUrl(src: string) {
+  const cssWidth = Math.min(window.innerWidth * 0.92, 992);
+  const targetWidth = Math.ceil(cssWidth * window.devicePixelRatio);
+  const width = LIGHTBOX_DEVICE_SIZES.find((size) => size >= targetWidth) ?? 2560;
+  return `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=95`;
+}
 
 export function HomeVisualShowcase() {
-  const [selectedVisual, setSelectedVisual] = useState<Visual | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [loadedLightboxSrc, setLoadedLightboxSrc] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(START_INDEX);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const touchStartXRef = useRef<number | null>(null);
+  const adjacentPreloadsRef = useRef<HTMLImageElement[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const slotRefs = useRef<Array<HTMLDivElement | null>>([]);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -51,7 +64,8 @@ export function HomeVisualShowcase() {
     slots.forEach((slot, index) => {
       const item = itemRefs.current[index];
       if (!slot || !item) return;
-      const offset = (slot.offsetLeft + slot.offsetWidth / 2 - center) / pitch;
+      const rawOffset = (slot.offsetLeft + slot.offsetWidth / 2 - center) / pitch;
+      const offset = Math.abs(rawOffset) < 0.01 ? 0 : rawOffset;
       const distance = Math.abs(offset);
       const side = offset < 0 ? -1 : 1;
       if (distance < nearestDistance) {
@@ -98,6 +112,17 @@ export function HomeVisualShowcase() {
     const pending = pendingTarget.current;
     return pending && Date.now() - pending.at < 800 ? pending.index : activeRef.current;
   };
+
+  const navigateLightbox = useCallback((index: number) => {
+    const nextIndex = Math.min(Math.max(index, 0), visuals.length - 1);
+    setSelectedIndex(nextIndex);
+    goTo(nextIndex);
+  }, [goTo]);
+
+  const closeLightbox = useCallback(() => setSelectedIndex(null), []);
+
+  const selectedVisual = selectedIndex === null ? null : visuals[selectedIndex];
+  const isLightboxOpen = selectedIndex !== null;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     let target: number;
@@ -162,13 +187,26 @@ export function HomeVisualShowcase() {
   }, [scheduleDepthUpdate, scrollToIndex]);
 
   useEffect(() => {
-    if (!selectedVisual) return;
+    if (selectedIndex === null) return;
+
+    adjacentPreloadsRef.current = [-1, 1]
+      .map((offset) => visuals[selectedIndex + offset])
+      .filter((visual): visual is Visual => Boolean(visual))
+      .map((visual) => {
+        const image = new window.Image();
+        image.src = getLightboxPreloadUrl(visual.src);
+        return image;
+      });
+  }, [selectedIndex]);
+
+  useEffect(() => {
+    if (!isLightboxOpen) return;
     const dialog = lightboxRef.current;
     if (!dialog) return;
     const focusable = Array.from(dialog.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
     focusable[0]?.focus();
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { setSelectedVisual(null); return; }
+      if (event.key === "Escape") { closeLightbox(); return; }
       if (event.key !== "Tab" || focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -178,8 +216,27 @@ export function HomeVisualShowcase() {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", handleKeyDown);
-    return () => { document.body.style.overflow = previousOverflow; document.removeEventListener("keydown", handleKeyDown); triggerRef.current?.focus(); };
-  }, [selectedVisual]);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+      triggerRef.current?.focus();
+    };
+  }, [isLightboxOpen, closeLightbox]);
+
+  useEffect(() => {
+    if (selectedIndex === null) return;
+    const handleNavigationKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        navigateLightbox(selectedIndex - 1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        navigateLightbox(selectedIndex + 1);
+      }
+    };
+    document.addEventListener("keydown", handleNavigationKeyDown);
+    return () => document.removeEventListener("keydown", handleNavigationKeyDown);
+  }, [selectedIndex, navigateLightbox]);
 
   return (
     <>
@@ -189,7 +246,7 @@ export function HomeVisualShowcase() {
             <div ref={scrollRef} className="showcase-track" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerEnd} onPointerCancel={handlePointerEnd}>
               {visuals.map((visual, index) => {
                 const isActive = index === activeIndex;
-                const isNearStart = Math.abs(index - START_INDEX) <= 2;
+                const isNearActive = Math.abs(index - activeIndex) <= 2;
                 return (
                   <div key={visual.alt} ref={(slot) => { slotRefs.current[index] = slot; }} className="showcase-slot">
                     <button
@@ -200,12 +257,22 @@ export function HomeVisualShowcase() {
                       aria-current={isActive ? "true" : undefined}
                       aria-label={`Open ${visual.alt}`}
                       onClick={(event) => {
-                        if (!isActive) goTo(index);
                         triggerRef.current = event.currentTarget;
-                        setSelectedVisual(visual);
+                        navigateLightbox(index);
                       }}
                     >
-                      <NextImage src={visual.src} sizes="(max-width: 640px) min(66vw, 15rem), (max-width: 1400px) 24vw, 336px" alt={visual.alt} width={900} height={1200} quality={80} loading={isNearStart ? "eager" : "lazy"} fetchPriority={isNearStart ? "low" : "auto"} decoding="async" draggable={false} />
+                      <NextImage
+                        src={visual.src}
+                        sizes={CARD_SIZES}
+                        alt={visual.alt}
+                        width={900}
+                        height={1200}
+                        quality={90}
+                        loading={isNearActive ? "eager" : "lazy"}
+                        fetchPriority={isActive ? "high" : "auto"}
+                        decoding="async"
+                        draggable={false}
+                      />
                     </button>
                   </div>
                 );
@@ -222,10 +289,70 @@ export function HomeVisualShowcase() {
         </Container>
       </Section>
 
-      {selectedVisual && (
-        <div ref={lightboxRef} className="showcase-lightbox" role="dialog" aria-modal="true" aria-label={selectedVisual.alt} onClick={() => setSelectedVisual(null)}>
-          <button type="button" className="showcase-lightbox__close" onClick={() => setSelectedVisual(null)} aria-label="Close visual preview"><X size={20} /></button>
-          <NextImage src={selectedVisual.src} alt={selectedVisual.alt} width={2400} height={3200} sizes="(max-width: 768px) 90vw, 70vw" quality={80} loading="lazy" decoding="async" onClick={(event) => event.stopPropagation()} />
+      {selectedVisual && selectedIndex !== null && (
+        <div ref={lightboxRef} className="showcase-lightbox" role="dialog" aria-modal="true" aria-label={selectedVisual.alt} onClick={closeLightbox}>
+          <button type="button" className="showcase-lightbox__close" onClick={closeLightbox} aria-label="Close visual preview"><X size={20} /></button>
+          <div
+            className="showcase-lightbox__content"
+            onClick={(event) => event.stopPropagation()}
+            onTouchStart={(event) => { touchStartXRef.current = event.changedTouches[0]?.clientX ?? null; }}
+            onTouchEnd={(event) => {
+              const startX = touchStartXRef.current;
+              touchStartXRef.current = null;
+              if (startX === null) return;
+              const delta = event.changedTouches[0]?.clientX - startX;
+              if (delta !== undefined && Math.abs(delta) > 48) {
+                navigateLightbox(selectedIndex + (delta < 0 ? 1 : -1));
+              }
+            }}
+          >
+            <div className="showcase-lightbox__media">
+              <NextImage
+                src={selectedVisual.src}
+                alt=""
+                fill
+                sizes={CARD_SIZES}
+                quality={90}
+                loading="eager"
+                decoding="async"
+                className="showcase-lightbox__thumbnail"
+                aria-hidden="true"
+              />
+              <NextImage
+                src={selectedVisual.src}
+                alt={selectedVisual.alt}
+                fill
+                sizes={LIGHTBOX_SIZES}
+                quality={95}
+                loading="eager"
+                priority
+                decoding="async"
+                className={`showcase-lightbox__image ${loadedLightboxSrc === selectedVisual.src ? "is-loaded" : ""}`}
+                onLoad={() => setLoadedLightboxSrc(selectedVisual.src)}
+              />
+            </div>
+            <button
+              type="button"
+              className="showcase-lightbox__step showcase-lightbox__step--previous"
+              onClick={() => navigateLightbox(selectedIndex - 1)}
+              disabled={selectedIndex === 0}
+              aria-label="Previous visual"
+            >
+              <ChevronLeft size={20} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="showcase-lightbox__step showcase-lightbox__step--next"
+              onClick={() => navigateLightbox(selectedIndex + 1)}
+              disabled={selectedIndex === visuals.length - 1}
+              aria-label="Next visual"
+            >
+              <ChevronRight size={20} aria-hidden="true" />
+            </button>
+            <span className="showcase-lightbox__counter" aria-live="polite" aria-atomic="true">
+              {selectedIndex + 1} / {visuals.length}
+            </span>
+          </div>
         </div>
       )}
     </>

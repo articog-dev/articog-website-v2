@@ -1,7 +1,7 @@
 "use client";
 
 import type { HeroContent } from "@/types";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import ReactDOM from "react-dom";
 import { Heading } from "@/components/ui";
 
@@ -9,14 +9,53 @@ interface HeroProps {
   content: HeroContent;
 }
 
+type VideoPreferences = `${"load" | "skip"}:${"mobile" | "desktop"}`;
+type SaveDataConnection = EventTarget & { saveData?: boolean };
+
+function getVideoPreferences(): VideoPreferences {
+  const connection = (navigator as Navigator & { connection?: SaveDataConnection }).connection;
+  const shouldSkip =
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches || connection?.saveData;
+  const viewport = window.matchMedia("(max-width: 767px)").matches ? "mobile" : "desktop";
+
+  return `${shouldSkip ? "skip" : "load"}:${viewport}`;
+}
+
+function subscribeToVideoPreferences(onChange: () => void) {
+  const mobileQuery = window.matchMedia("(max-width: 767px)");
+  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const connection = (navigator as Navigator & { connection?: SaveDataConnection }).connection;
+
+  mobileQuery.addEventListener("change", onChange);
+  reducedMotionQuery.addEventListener("change", onChange);
+  connection?.addEventListener("change", onChange);
+
+  return () => {
+    mobileQuery.removeEventListener("change", onChange);
+    reducedMotionQuery.removeEventListener("change", onChange);
+    connection?.removeEventListener("change", onChange);
+  };
+}
+
+function getServerVideoPreferences(): VideoPreferences {
+  return "skip:desktop";
+}
+
 export function Hero({ content }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoPreferences = useSyncExternalStore(
+    subscribeToVideoPreferences,
+    getVideoPreferences,
+    getServerVideoPreferences,
+  );
+  const shouldLoadVideo = videoPreferences.startsWith("load:");
+  const isMobileViewport = videoPreferences.endsWith(":mobile");
 
   ReactDOM.preload("/hero-poster.jpg", { as: "image", fetchPriority: "high" });
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !shouldLoadVideo) return;
 
     const attemptPlayback = () => {
       void video.play().catch(() => {});
@@ -24,13 +63,14 @@ export function Hero({ content }: HeroProps) {
 
     video.addEventListener("loadeddata", attemptPlayback);
     video.addEventListener("canplay", attemptPlayback);
+    video.load();
     attemptPlayback();
 
     return () => {
       video.removeEventListener("loadeddata", attemptPlayback);
       video.removeEventListener("canplay", attemptPlayback);
     };
-  }, []);
+  }, [shouldLoadVideo, isMobileViewport]);
 
   return (
     <section
@@ -43,7 +83,6 @@ export function Hero({ content }: HeroProps) {
       <div className="absolute inset-0 z-0 bg-black">
         <video
           ref={videoRef}
-          src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
           autoPlay
           muted
           playsInline
@@ -53,7 +92,23 @@ export function Hero({ content }: HeroProps) {
           poster="/hero-poster.jpg"
           className="absolute inset-0 h-full w-full object-cover object-center"
           aria-hidden="true"
-        />
+        >
+          {shouldLoadVideo ? (
+            <>
+              <source
+                src="https://media.articog.com/videos/backgrounds/WA-03-mobile.mp4"
+                media="(max-width: 767px)"
+                type="video/mp4"
+              />
+              {!isMobileViewport ? (
+                <source
+                  src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
+                  type="video/mp4"
+                />
+              ) : null}
+            </>
+          ) : null}
+        </video>
 
         {/* Light vignette for text readability without washing out the video */}
         <div

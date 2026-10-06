@@ -146,4 +146,23 @@ No Bing verification value, IndexNow key, or IndexNow integration is configured 
 
 Bing verification, sitemap submission, URL inspection, and any IndexNow key hosting or submission remain manual production-account tasks.
 
+## Background video delivery
+
+Run `bash scripts/optimize-videos.sh` to create upload-ready MP4s in `public/videos/optimized/`. Upload these files to `https://media.articog.com/videos/backgrounds/` using their existing output names. The optimized files replace `WA-01.mp4`, `WA-02.mp4`, and `WA-03.mp4`; also upload `WA-03-mobile.mp4` for the responsive hero source. The original local source files remain unchanged.
+
+On Windows PowerShell with Git for Windows, run `& 'C:\Program Files\Git\bin\bash.exe' scripts/optimize-videos.sh`.
+
+The script uses H.264, CRF 28 for the desktop hero, CRF 27 for the other desktop videos, CRF 29 for mobile, the slow preset, no audio, `yuv420p`, and `+faststart`. Equivalent hero examples:
+
+```bash
+ffmpeg -i public/videos/hero.mp4 -map 0:v:0 -an -vf "scale=1280:-2" -c:v libx264 -crf 28 -preset slow -maxrate 900k -bufsize 1800k -pix_fmt yuv420p -movflags +faststart public/videos/optimized/WA-03.mp4
+ffmpeg -i public/videos/hero.mp4 -map 0:v:0 -an -vf "scale=640:-2" -c:v libx264 -crf 29 -preset slow -maxrate 550k -bufsize 1100k -pix_fmt yuv420p -movflags +faststart public/videos/optimized/WA-03-mobile.mp4
+```
+
+After upload, verify CDN delivery for each asset:
+
+- `curl -I https://media.articog.com/videos/backgrounds/WA-03.mp4` should return `Content-Type: video/mp4`, `Accept-Ranges: bytes`, and `Cache-Control: public, max-age=31536000, immutable`.
+- `curl -sS -D - -o /dev/null -H "Range: bytes=0-1" https://media.articog.com/videos/backgrounds/WA-03.mp4` should return `206 Partial Content` with a `Content-Range` header.
+- Confirm delivery is CDN-backed over HTTP/2 or HTTP/3, and inspect the uploaded MP4 to confirm its `moov` atom is at the beginning (`+faststart`). Repeat for `WA-03-mobile.mp4`, `WA-01.mp4`, and `WA-02.mp4`.
+
 

@@ -6,9 +6,9 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,
-    deviceSizes: [320, 420, 640, 768, 1024, 1200, 1440, 1920],
+    deviceSizes: [320, 420, 640, 768, 1024, 1200, 1440, 1920, 2560],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    qualities: [60, 70, 80],
+    qualities: [60, 70, 80, 90, 95],
     remotePatterns: [
       { protocol: "https", hostname: "media.articog.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
