@@ -157,26 +157,29 @@ test.describe("book-a-demo flow", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Pick a time that works for you" })).toBeVisible();
     await expect(page.locator("main form")).toBeHidden();
 
-    const indiaTab = page.getByRole("tab", { name: "India / Middle East Team" });
-    const americasTab = page.getByRole("tab", { name: "Americas Team" });
+    const indiaTab = page.getByRole("tab", { name: "India / ME Team" });
+    const internationalTab = page.getByRole("tab", { name: "International Team" });
+    const directBookingLink = page.getByRole("link", { name: "Open the booking page directly" });
     const embed = page.locator("#cal-booking-panel [data-cal-link]");
     const iframe = page.locator("#cal-booking-panel iframe");
 
     await expect(indiaTab).toBeVisible();
-    await expect(americasTab).toBeVisible();
+    await expect(internationalTab).toBeVisible();
     await expect(embed).toHaveAttribute("data-cal-link", /articog\/demo-(india|americas)/);
     await expect(iframe).toHaveAttribute("src", /name=E2E\+Test/);
     await expect(iframe).toHaveAttribute("src", /email=e2e%40example\.com/);
 
     await indiaTab.click();
     await expect(embed).toHaveAttribute("data-cal-link", "articog/demo-india");
-    await americasTab.click();
-    await expect(americasTab).toHaveAttribute("aria-selected", "true");
+    await expect(directBookingLink).toHaveAttribute("href", "https://cal.com/articog/demo-india");
+    await internationalTab.click();
+    await expect(internationalTab).toHaveAttribute("aria-selected", "true");
     await expect(embed).toHaveAttribute("data-cal-link", "articog/demo-americas");
+    await expect(directBookingLink).toHaveAttribute("href", "https://cal.com/articog/demo-americas");
 
     await indiaTab.focus();
     await page.keyboard.press("ArrowRight");
-    await expect(americasTab).toBeFocused();
+    await expect(internationalTab).toBeFocused();
     await expect(embed).toHaveAttribute("data-cal-link", "articog/demo-americas");
     await expect(page.getByRole("link", { name: "Open the booking page directly" }))
       .toHaveAttribute("rel", "noopener noreferrer");

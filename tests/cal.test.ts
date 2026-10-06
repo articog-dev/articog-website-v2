@@ -3,6 +3,10 @@ import { CAL_TEAMS, calPublicUrl } from "../lib/cal";
 
 describe("Cal.com booking configuration", () => {
   it("keeps the regional booking links and public URL correct", () => {
+    expect(CAL_TEAMS.map(({ id, label }) => [id, label])).toEqual([
+      ["india-me", "India / ME Team"],
+      ["international", "International Team"],
+    ]);
     expect(CAL_TEAMS.map(({ calLink }) => calLink)).toEqual([
       "articog/demo-india",
       "articog/demo-americas",

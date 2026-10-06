@@ -18,6 +18,7 @@ interface BookingPrefill {
 export default function BookADemoPage() {
   const [step, setStep] = useState<"form" | "schedule">("form");
   const [prefill, setPrefill] = useState<BookingPrefill | null>(null);
+  const [activeTeamId, setActiveTeamId] = useState<(typeof CAL_TEAMS)[number]["id"]>(CAL_TEAMS[0].id);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [hasTrackedFormStart, setHasTrackedFormStart] = useState(false);
@@ -444,7 +445,11 @@ export default function BookADemoPage() {
               aria-labelledby="booking-page-heading"
               className="scroll-mt-[calc(var(--header-offset)+var(--gap-header-to-content))]"
             >
-              <BookingTabs prefill={prefill} />
+              <BookingTabs
+                prefill={prefill}
+                activeTeamId={activeTeamId}
+                onActiveTeamChange={setActiveTeamId}
+              />
               <div className="mt-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-white/55">
                 <button
                   type="button"
@@ -456,7 +461,7 @@ export default function BookADemoPage() {
                 <span aria-hidden="true">·</span>
                 <span>Having trouble?</span>
                 <a
-                  href={calPublicUrl(CAL_TEAMS[0].calLink)}
+                  href={calPublicUrl(CAL_TEAMS.find((team) => team.id === activeTeamId)?.calLink ?? CAL_TEAMS[0].calLink)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white underline underline-offset-4 transition-colors hover:text-white/75"

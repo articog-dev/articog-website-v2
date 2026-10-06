@@ -1,16 +1,17 @@
 "use client";
 
-import { startTransition, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { startTransition, useEffect, useRef, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui";
 import { CAL_TEAMS } from "@/lib/cal";
 import { CalEmbed } from "./CalEmbed";
 
 interface BookingTabsProps {
   prefill?: { name?: string; email?: string; notes?: string };
+  activeTeamId: (typeof CAL_TEAMS)[number]["id"];
+  onActiveTeamChange: (teamId: (typeof CAL_TEAMS)[number]["id"]) => void;
 }
 
-export function BookingTabs({ prefill }: BookingTabsProps) {
-  const [activeTeamId, setActiveTeamId] = useState<(typeof CAL_TEAMS)[number]["id"]>(CAL_TEAMS[0].id);
+export function BookingTabs({ prefill, activeTeamId, onActiveTeamChange }: BookingTabsProps) {
   const hasSelectedTeam = useRef(false);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const activeTeamIndex = CAL_TEAMS.findIndex((team) => team.id === activeTeamId);
@@ -20,9 +21,9 @@ export function BookingTabs({ prefill }: BookingTabsProps) {
     if (hasSelectedTeam.current) return;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (timeZone.startsWith("America/")) {
-      startTransition(() => setActiveTeamId("americas"));
+      startTransition(() => onActiveTeamChange("international"));
     }
-  }, []);
+  }, [onActiveTeamChange]);
 
   const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex: number | undefined;
@@ -34,7 +35,7 @@ export function BookingTabs({ prefill }: BookingTabsProps) {
 
     event.preventDefault();
     hasSelectedTeam.current = true;
-    setActiveTeamId(CAL_TEAMS[nextIndex].id);
+    onActiveTeamChange(CAL_TEAMS[nextIndex].id);
     tabRefs.current[nextIndex]?.focus();
   };
 
@@ -58,7 +59,7 @@ export function BookingTabs({ prefill }: BookingTabsProps) {
               className={`h-10 px-4 py-2 text-xs leading-none uppercase tracking-wide md:h-11 md:text-sm ${isActive ? "border-white bg-white text-black hover:bg-white/85" : "border-white/20 bg-transparent text-white hover:bg-white/[0.06]"}`}
               onClick={() => {
                 hasSelectedTeam.current = true;
-                setActiveTeamId(team.id);
+                onActiveTeamChange(team.id);
               }}
               onKeyDown={(event) => handleTabKeyDown(event, index)}
             >
