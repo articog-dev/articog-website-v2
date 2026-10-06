@@ -157,7 +157,7 @@ test.describe("book-a-demo flow", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Pick a time that works for you" })).toBeVisible();
     await expect(page.locator("main form")).toBeHidden();
 
-    const indiaTab = page.getByRole("tab", { name: "India / ME Team" });
+    const indiaTab = page.getByRole("tab", { name: "India / Middle East Team" });
     const internationalTab = page.getByRole("tab", { name: "International Team" });
     const directBookingLink = page.getByRole("link", { name: "Open the booking page directly" });
     const embed = page.locator("#cal-booking-panel [data-cal-link]");
