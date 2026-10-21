@@ -47,7 +47,8 @@ describe("media SEO metadata", () => {
     }
 
     expect(hero).toContain("autoPlay");
-    expect(pipeline).toContain('preload="none"');
+    expect(pipeline).toContain('preload="metadata"');
+    expect(pipeline).toContain("src={shouldLoad ? VIDEO_SOURCES.pipeline : undefined}");
     expect(pipeline).toContain('poster="/pipeline-poster.jpg"');
     expect(pipeline).toContain("useBufferedAutoplay");
     expect(approach).toContain('poster="/our-approach-poster.jpg"');
@@ -56,22 +57,34 @@ describe("media SEO metadata", () => {
     const lazyVideo = read("components", "ui", "LazyVideo.tsx");
     expect(lazyVideo).toContain("<video");
     expect(lazyVideo).toContain("IntersectionObserver");
+    expect(lazyVideo).toContain('aria-label={isPlaying ? "Pause background video" : "Play background video"}');
+    expect(lazyVideo).toContain("Video playback failed");
+    expect(lazyVideo).toContain("Video source failed");
     expect(read("app", "services", "page.tsx")).toContain("poster=");
   });
 
-  it("uses Hostinger media without guessed or master URLs", () => {
+  it("uses local-first video constants without guessed or master URLs", () => {
     const sourceFiles = [
       ["components", "sections", "HomeVisualShowcase.tsx"],
       ["components", "sections", "Hero.tsx"],
       ["components", "sections", "Pipeline.tsx"],
+      ["components", "sections", "OurApproach.tsx"],
+      ["app", "services", "page.tsx"],
     ];
+    const videoSources = read("lib", "video-sources.ts");
 
     for (const file of sourceFiles) {
       const source = read(...file);
       expect(source).not.toMatch(/https:\/\/res\.[^/]+\.com\//);
+      expect(source).not.toContain("media.articog.com/videos/backgrounds");
       expect(source).not.toMatch(/\b(?:4k|master|production-master)\b/i);
     }
 
+    expect(videoSources).toContain('return `/videos/optimized/${filename}`;');
+    expect(videoSources).toContain("NEXT_PUBLIC_MEDIA_BASE_URL");
+    for (const filename of ["WA-01.mp4", "WA-02.mp4", "WA-03.mp4", "WA-03-mobile.mp4"]) {
+      expect(videoSources).toContain(`"${filename}"`);
+    }
     expect(read("components", "sections", "HomeVisualShowcase.tsx")).toContain(
       "https://media.articog.com/images/home/",
     );

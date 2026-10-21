@@ -1,9 +1,10 @@
 "use client";
 
 import type { HeroContent } from "@/types";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import ReactDOM from "react-dom";
 import { Heading } from "@/components/ui";
+import { LOCAL_VIDEO_SOURCES, VIDEO_SOURCES } from "@/lib/video-sources";
 
 interface HeroProps {
   content: HeroContent;
@@ -43,6 +44,14 @@ function getServerVideoPreferences(): VideoPreferences {
 
 export function Hero({ content }: HeroProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const failedSourcesRef = useRef<{ selectedSrc: string; urls: string[] }>({
+    selectedSrc: "",
+    urls: [],
+  });
+  const [fallbackSrc, setFallbackSrc] = useState<{ selectedSrc: string; src: string }>();
+  const [manualPlayback, setManualPlayback] = useState(false);
+  const [showPlaybackButton, setShowPlaybackButton] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const videoPreferences = useSyncExternalStore(
     subscribeToVideoPreferences,
     getVideoPreferences,
@@ -50,27 +59,128 @@ export function Hero({ content }: HeroProps) {
   );
   const shouldLoadVideo = videoPreferences.startsWith("load:");
   const isMobileViewport = videoPreferences.endsWith(":mobile");
+  const selectedVideoSrc = isMobileViewport
+    ? VIDEO_SOURCES.heroMobile
+    : VIDEO_SOURCES.heroDesktop;
+  const otherVideoSrc = isMobileViewport
+    ? VIDEO_SOURCES.heroDesktop
+    : VIDEO_SOURCES.heroMobile;
+  const selectedLocalSrc = isMobileViewport
+    ? LOCAL_VIDEO_SOURCES.heroMobile
+    : LOCAL_VIDEO_SOURCES.heroDesktop;
+  const otherLocalSrc = isMobileViewport
+    ? LOCAL_VIDEO_SOURCES.heroDesktop
+    : LOCAL_VIDEO_SOURCES.heroMobile;
+  const videoSrc =
+    fallbackSrc?.selectedSrc === selectedVideoSrc ? fallbackSrc.src : selectedVideoSrc;
+  const shouldLoadVideoSource = shouldLoadVideo || manualPlayback;
 
   ReactDOM.preload("/hero-poster.jpg", { as: "image", fetchPriority: "high" });
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !shouldLoadVideo) return;
+    if (!video || !shouldLoadVideoSource) return;
 
     const attemptPlayback = () => {
-      void video.play().catch(() => {});
+      video.muted = true;
+      video.defaultMuted = true;
+      void video.play().catch((error: unknown) => {
+        console.warn("Video playback failed", {
+          error,
+          errorCode: video.error?.code,
+          currentSrc: video.currentSrc,
+          networkState: video.networkState,
+        });
+        setShowPlaybackButton(true);
+        if (gestureRetryHandler) return;
+        gestureRetryHandler = () => {
+          removeGestureRetryListeners();
+          attemptPlayback();
+        };
+        window.addEventListener("touchstart", gestureRetryHandler, { once: true, passive: true });
+        window.addEventListener("click", gestureRetryHandler, { once: true });
+        window.addEventListener("scroll", gestureRetryHandler, { once: true, passive: true });
+      });
     };
+    const removeGestureRetryListeners = () => {
+      if (!gestureRetryHandler) return;
+      window.removeEventListener("touchstart", gestureRetryHandler);
+      window.removeEventListener("click", gestureRetryHandler);
+      window.removeEventListener("scroll", gestureRetryHandler);
+      gestureRetryHandler = undefined;
+    };
+    let gestureRetryHandler: (() => void) | undefined;
 
     video.addEventListener("loadeddata", attemptPlayback);
     video.addEventListener("canplay", attemptPlayback);
+    const handlePlaying = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    video.addEventListener("playing", handlePlaying);
+    video.addEventListener("pause", handlePause);
     video.load();
     attemptPlayback();
 
     return () => {
+      removeGestureRetryListeners();
       video.removeEventListener("loadeddata", attemptPlayback);
       video.removeEventListener("canplay", attemptPlayback);
+      video.removeEventListener("playing", handlePlaying);
+      video.removeEventListener("pause", handlePause);
     };
-  }, [shouldLoadVideo, isMobileViewport]);
+  }, [shouldLoadVideoSource, videoSrc]);
+
+  const handleVideoError: React.ReactEventHandler<HTMLVideoElement> = (event) => {
+    const video = event.currentTarget;
+    console.warn("Video source failed", {
+      errorCode: video.error?.code,
+      currentSrc: video.currentSrc,
+      networkState: video.networkState,
+    });
+
+    if (failedSourcesRef.current.selectedSrc !== selectedVideoSrc) {
+      failedSourcesRef.current = { selectedSrc: selectedVideoSrc, urls: [] };
+    }
+    const failedSources = failedSourcesRef.current.urls;
+    failedSources.push(video.currentSrc, videoSrc);
+    const nextSource = [otherVideoSrc, selectedLocalSrc, otherLocalSrc].find((candidate) => {
+      const absoluteCandidate = new URL(candidate, window.location.href).href;
+      return !failedSources.some(
+        (failedSource) =>
+          failedSource === candidate ||
+          failedSource === absoluteCandidate,
+      );
+    });
+
+    if (nextSource) {
+      setFallbackSrc({ selectedSrc: selectedVideoSrc, src: nextSource });
+    } else {
+      setShowPlaybackButton(true);
+    }
+  };
+
+  const handlePlaybackButton = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    setShowPlaybackButton(true);
+    if (!video.paused) {
+      video.pause();
+      return;
+    }
+
+    setManualPlayback(true);
+    video.muted = true;
+    video.src = videoSrc;
+    video.load();
+    void video.play().catch((error: unknown) => {
+      console.warn("Video playback failed", {
+        error,
+        errorCode: video.error?.code,
+        currentSrc: video.currentSrc,
+        networkState: video.networkState,
+      });
+    });
+  };
 
   return (
     <section
@@ -89,26 +199,22 @@ export function Hero({ content }: HeroProps) {
           loop
           controls={false}
           preload="auto"
+          src={shouldLoadVideoSource ? videoSrc : undefined}
+          onError={handleVideoError}
           poster="/hero-poster.jpg"
           className="absolute inset-0 h-full w-full object-cover object-center"
           aria-hidden="true"
-        >
-          {shouldLoadVideo ? (
-            <>
-              <source
-                src="https://media.articog.com/videos/backgrounds/WA-03-mobile.mp4"
-                media="(max-width: 767px)"
-                type="video/mp4"
-              />
-              {!isMobileViewport ? (
-                <source
-                  src="https://media.articog.com/videos/backgrounds/WA-03.mp4"
-                  type="video/mp4"
-                />
-              ) : null}
-            </>
-          ) : null}
-        </video>
+        />
+        {showPlaybackButton || !shouldLoadVideo ? (
+          <button
+            type="button"
+            onClick={handlePlaybackButton}
+            aria-label={isPlaying ? "Pause background video" : "Play background video"}
+            className="absolute bottom-4 right-4 z-20 rounded-full border border-white/30 bg-black/70 px-3 py-2 text-xs text-white backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {isPlaying ? "Pause video" : "Play video"}
+          </button>
+        ) : null}
 
         {/* Light vignette for text readability without washing out the video */}
         <div

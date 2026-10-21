@@ -31,12 +31,16 @@ describe("performance boundaries", () => {
   it("loads only the responsive hero video eagerly and keeps the gallery lazy", () => {
     const hero = read("components", "sections", "Hero.tsx");
     const gallery = read("components", "sections", "HomeVisualShowcase.tsx");
+    const videoSources = read("lib", "video-sources.ts");
 
-    expect(hero).toContain('src="https://media.articog.com/videos/backgrounds/WA-03-mobile.mp4"');
-    expect(hero).toContain('media="(max-width: 767px)"');
+    expect(videoSources).toContain('heroMobile: videoUrl("WA-03-mobile.mp4")');
+    expect(videoSources).toContain('heroDesktop: videoUrl("WA-03.mp4")');
+    expect(hero).toContain("const selectedVideoSrc = isMobileViewport");
+    expect(hero).toContain("src={shouldLoadVideoSource ? videoSrc : undefined}");
+    expect(hero).not.toContain("<source");
     expect(hero).toContain('window.matchMedia("(max-width: 767px)")');
-    expect(hero).toContain("!isMobileViewport ? (");
-    expect(hero).toContain('src="https://media.articog.com/videos/backgrounds/WA-03.mp4"');
+    expect(hero).toContain("handleVideoError");
+    expect(hero).toContain("LOCAL_VIDEO_SOURCES");
     expect(hero).toContain("autoPlay");
     expect(hero).toContain("muted");
     expect(hero).toContain("playsInline");
@@ -59,22 +63,26 @@ describe("performance boundaries", () => {
   it("keeps Pipeline lazy and poster-backed while only the hero is eager", () => {
     const pipeline = read("components", "sections", "Pipeline.tsx");
     const approach = read("components", "sections", "OurApproach.tsx");
+    const videoSources = read("lib", "video-sources.ts");
 
     expect(pipeline).toContain('{ rootMargin: "300px" }');
     expect(pipeline).toContain("enabled: shouldLoad");
-    expect(pipeline).toContain('src: "https://media.articog.com/videos/backgrounds/WA-01.mp4"');
-    expect(pipeline).toContain('preload="none"');
+    expect(videoSources).toContain('pipeline: videoUrl("WA-01.mp4")');
+    expect(pipeline).toContain("src={shouldLoad ? VIDEO_SOURCES.pipeline : undefined}");
+    expect(pipeline).toContain('preload="metadata"');
     expect(pipeline).toContain('poster="/pipeline-poster.jpg"');
-    expect(pipeline).not.toContain("autoPlay");
+    expect(pipeline).toContain("autoPlay");
     expect(pipeline).not.toContain('preload="auto"');
-    expect(pipeline).not.toContain('src="https://media.articog.com/videos/backgrounds/WA-01.mp4"');
     expect(pipeline).toContain("muted");
     expect(pipeline).toContain("playsInline");
     expect(pipeline).toContain('aria-hidden="true"');
 
     expect(approach).toContain('poster="/our-approach-poster.jpg"');
     expect(approach).toContain("enabled: shouldLoad");
-    expect(approach).toContain('preload="none"');
+    expect(approach).toContain('preload="metadata"');
+    expect(approach).toContain("src={shouldLoad ? VIDEO_SOURCES.approach : undefined}");
+    expect(videoSources).toContain('approach: videoUrl("WA-02.mp4")');
+    expect(approach).toContain("autoPlay");
     expect(approach).toContain("muted");
     expect(approach).toContain("playsInline");
     expect(approach).toContain('aria-hidden="true"');
@@ -89,8 +97,8 @@ describe("performance boundaries", () => {
     const services = read("app", "services", "page.tsx");
 
     expect(services).toContain('media: "(max-width: 767px)"');
-    expect(services).toContain("WA-03-mobile.mp4");
-    expect(services).toContain("WA-03.mp4");
+    expect(services).toContain("VIDEO_SOURCES.heroMobile");
+    expect(services).toContain("VIDEO_SOURCES.heroDesktop");
     expect(services).toContain('preload="auto"');
     expect(services).toContain("<LazyVideo");
   });

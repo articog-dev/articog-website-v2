@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { Container, Section, Heading } from "@/components/ui";
 import { ScrollReveal } from "@/components/animations";
 import { useBufferedAutoplay } from "@/hooks/use-buffered-autoplay";
+import { VIDEO_SOURCES } from "@/lib/video-sources";
 
 const approachItems = [
   {
@@ -46,9 +47,8 @@ export function OurApproach() {
     return () => observer.disconnect();
   }, []);
 
-  useBufferedAutoplay(videoRef, {
+  const { showPlaybackButton, isPlaying, togglePlayback } = useBufferedAutoplay(videoRef, {
     enabled: shouldLoad,
-    src: "https://media.articog.com/videos/backgrounds/WA-02.mp4",
   });
 
   return (
@@ -81,14 +81,26 @@ export function OurApproach() {
             }
           }}
           muted
+          autoPlay
           playsInline
           loop
           controls={false}
-          preload="none"
+          preload="metadata"
+          src={shouldLoad ? VIDEO_SOURCES.approach : undefined}
           poster="/our-approach-poster.jpg"
           className="absolute inset-0 h-full w-full object-cover object-center"
           aria-hidden="true"
         />
+        {showPlaybackButton ? (
+          <button
+            type="button"
+            onClick={togglePlayback}
+            aria-label={isPlaying ? "Pause approach background video" : "Play approach background video"}
+            className="absolute bottom-4 right-4 z-20 rounded-full border border-white/30 bg-black/70 px-3 py-2 text-xs text-white backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            {isPlaying ? "Pause video" : "Play video"}
+          </button>
+        ) : null}
       </div>
 
       <Container>

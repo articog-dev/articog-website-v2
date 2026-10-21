@@ -14,6 +14,7 @@ import { ArrowRight, Grid2X2, Instagram, Layers3, Smartphone } from "lucide-reac
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { topLevelServiceLinks } from "@/lib/service-navigation";
 import { LazyVideo } from "@/components/ui/LazyVideo";
+import { VIDEO_SOURCES } from "@/lib/video-sources";
 
 const serviceDeliverables = [
   {
@@ -341,12 +342,12 @@ export default function ServicesPage() {
             <LazyVideo
               sources={[
                 {
-                  src: "https://media.articog.com/videos/backgrounds/WA-03-mobile.mp4",
+                  src: VIDEO_SOURCES.heroMobile,
                   media: "(max-width: 767px)",
                   type: "video/mp4",
                 },
                 {
-                  src: "https://media.articog.com/videos/backgrounds/WA-03.mp4",
+                  src: VIDEO_SOURCES.heroDesktop,
                   type: "video/mp4",
                 },
               ]}

@@ -109,6 +109,7 @@ Set these in the hosting environment (never commit values):
 | `PRIVACY_REQUEST_ALERT_EMAIL` | Recipient of privacy-request alerts |
 | `GOOGLE_SHEETS_WEB_APP_URL` | Google Sheets mirror endpoint |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Enables Google Analytics 4 |
+| `NEXT_PUBLIC_MEDIA_BASE_URL` | Optional CDN base URL for background videos; leave unset to use local files |
 
 ## 9. Security
 
@@ -121,7 +122,7 @@ Configured in `next.config.ts` `headers()` for all routes:
 
 ## 10. Images and media
 
-`next/image` is configured for AVIF and WebP with fixed device sizes and remote patterns for `media.articog.com`, Unsplash, YouTube thumbnails, and Medium. Hero, approach, and pipeline videos live in `public/videos`, with poster images alongside. `LazyVideo` and `hooks/use-buffered-autoplay.ts` control video loading.
+`next/image` is configured for AVIF and WebP with fixed device sizes and remote patterns for `media.articog.com`, Unsplash, YouTube thumbnails, and Medium. Background videos use the optimized local files in `public/videos/optimized/` by default. Set `NEXT_PUBLIC_MEDIA_BASE_URL` to a CDN origin to serve the same `/videos/optimized/` paths from that host; its origin is included in `media-src`. `LazyVideo` and `hooks/use-buffered-autoplay.ts` control video loading.
 
 ## 11. SEO and discoverability
 

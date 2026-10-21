@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from "react";
+import { useEffect, useState, useSyncExternalStore, type RefObject } from "react";
 
 const FALLBACK_START_MS = 3_000;
 const STALL_RETRY_MS = 800;
@@ -7,20 +7,61 @@ interface Options {
   enabled?: boolean;
   keepPlaying?: boolean;
   waitForBuffer?: boolean;
-  src?: string;
+}
+
+type SaveDataConnection = EventTarget & { saveData?: boolean };
+
+function isAutoplayBlocked() {
+  const connection = (navigator as Navigator & { connection?: SaveDataConnection }).connection;
+  return (
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    Boolean(connection?.saveData)
+  );
+}
+
+function subscribeToAutoplayPreference(onChange: () => void) {
+  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const connection = (navigator as Navigator & { connection?: SaveDataConnection }).connection;
+
+  reducedMotionQuery.addEventListener("change", onChange);
+  connection?.addEventListener("change", onChange);
+
+  return () => {
+    reducedMotionQuery.removeEventListener("change", onChange);
+    connection?.removeEventListener("change", onChange);
+  };
 }
 
 export function useBufferedAutoplay(
   videoRef: RefObject<HTMLVideoElement | null>,
-  { enabled = true, keepPlaying = false, waitForBuffer = true, src }: Options = {},
+  { enabled = true, keepPlaying = false, waitForBuffer = true }: Options = {},
 ) {
+  const autoplayBlocked = useSyncExternalStore(
+    subscribeToAutoplayPreference,
+    isAutoplayBlocked,
+    () => true,
+  );
+  const [showPlaybackButton, setShowPlaybackButton] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !enabled) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const handlePlaying = () => {
+      setIsPlaying(true);
+      clearStallTimer();
+    };
+    const handlePauseEvent = () => setIsPlaying(false);
+    video.addEventListener("playing", handlePlaying);
+    video.addEventListener("pause", handlePauseEvent);
+
+    if (autoplayBlocked) {
       video.pause();
-      return;
+      return () => {
+        video.removeEventListener("playing", handlePlaying);
+        video.removeEventListener("pause", handlePauseEvent);
+      };
     }
 
     video.muted = true;
@@ -31,12 +72,40 @@ export function useBufferedAutoplay(
     let playPromise: Promise<void> | null = null;
     let fallbackTimer: number | undefined;
     let stallTimer: number | undefined;
+    let gestureRetryHandler: (() => void) | undefined;
 
     const play = () => {
       if (!video.paused || playPromise) return;
-      playPromise = video.play().catch(() => undefined).finally(() => {
-        playPromise = null;
-      });
+      video.muted = true;
+      playPromise = video.play()
+        .then(() => setIsPlaying(true))
+        .catch((error: unknown) => {
+          console.warn("Video playback failed", {
+            error,
+            errorCode: video.error?.code,
+            currentSrc: video.currentSrc,
+            networkState: video.networkState,
+          });
+          setShowPlaybackButton(true);
+          if (gestureRetryHandler) return;
+          gestureRetryHandler = () => {
+            removeGestureRetryListeners();
+            play();
+          };
+          window.addEventListener("touchstart", gestureRetryHandler, { once: true, passive: true });
+          window.addEventListener("click", gestureRetryHandler, { once: true });
+          window.addEventListener("scroll", gestureRetryHandler, { once: true, passive: true });
+        })
+        .finally(() => {
+          playPromise = null;
+        });
+    };
+    const removeGestureRetryListeners = () => {
+      if (!gestureRetryHandler) return;
+      window.removeEventListener("touchstart", gestureRetryHandler);
+      window.removeEventListener("click", gestureRetryHandler);
+      window.removeEventListener("scroll", gestureRetryHandler);
+      gestureRetryHandler = undefined;
     };
 
     const start = () => {
@@ -70,22 +139,15 @@ export function useBufferedAutoplay(
     };
 
     const handlePlaybackReady = () => play();
-
     video.addEventListener("loadedmetadata", handlePlaybackReady);
     video.addEventListener("loadeddata", handlePlaybackReady);
     video.addEventListener("canplay", handlePlaybackReady);
     video.addEventListener("pause", handlePause);
     video.addEventListener("waiting", handleStall);
     video.addEventListener("stalled", handleStall);
-    video.addEventListener("playing", clearStallTimer);
+    video.addEventListener("playing", handlePlaying);
+    video.addEventListener("pause", handlePauseEvent);
     document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    if (src) {
-      const nextSrc = new URL(src, window.location.href).toString();
-      if (video.currentSrc !== nextSrc && video.getAttribute("src") !== src) {
-        video.setAttribute("src", src);
-      }
-    }
 
     if (!waitForBuffer || video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
       start();
@@ -97,6 +159,7 @@ export function useBufferedAutoplay(
     return () => {
       window.clearTimeout(fallbackTimer);
       clearStallTimer();
+      removeGestureRetryListeners();
       video.removeEventListener("canplay", start);
       video.removeEventListener("loadedmetadata", handlePlaybackReady);
       video.removeEventListener("loadeddata", handlePlaybackReady);
@@ -104,8 +167,38 @@ export function useBufferedAutoplay(
       video.removeEventListener("pause", handlePause);
       video.removeEventListener("waiting", handleStall);
       video.removeEventListener("stalled", handleStall);
-      video.removeEventListener("playing", clearStallTimer);
+      video.removeEventListener("playing", handlePlaying);
+      video.removeEventListener("pause", handlePauseEvent);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [videoRef, enabled, keepPlaying, waitForBuffer, src]);
+  }, [videoRef, enabled, keepPlaying, waitForBuffer, autoplayBlocked]);
+
+  const togglePlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video.muted = true;
+      void video.play().then(() => {
+        setIsPlaying(true);
+      }).catch((error: unknown) => {
+        console.warn("Video playback failed", {
+          error,
+          errorCode: video.error?.code,
+          currentSrc: video.currentSrc,
+          networkState: video.networkState,
+        });
+        setShowPlaybackButton(true);
+      });
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  return {
+    showPlaybackButton: showPlaybackButton || autoplayBlocked,
+    isPlaying,
+    togglePlayback,
+  };
 }
