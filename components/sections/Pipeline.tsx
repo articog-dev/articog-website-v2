@@ -5,7 +5,7 @@ import { Container, Section, Heading } from "@/components/ui";
 import { ScrollReveal } from "@/components/animations";
 import { useBufferedAutoplay } from "@/hooks/use-buffered-autoplay";
 import type { PipelineStep } from "@/types";
-import { VIDEO_SOURCES } from "@/lib/video-sources";
+import { VIDEO_FALLBACK_SOURCES, VIDEO_SOURCES } from "@/lib/video-sources";
 
 interface PipelineProps {
   steps: PipelineStep[];
@@ -36,6 +36,7 @@ export function Pipeline({ steps, align = "left", showDetails = false }: Pipelin
 
   const { showPlaybackButton, isPlaying, togglePlayback } = useBufferedAutoplay(videoRef, {
     enabled: shouldLoad,
+    fallbackSources: VIDEO_FALLBACK_SOURCES.pipeline,
   });
 
   return (

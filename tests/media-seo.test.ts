@@ -82,9 +82,22 @@ describe("media SEO metadata", () => {
 
     expect(videoSources).toContain('return `/videos/optimized/${filename}`;');
     expect(videoSources).toContain("NEXT_PUBLIC_MEDIA_BASE_URL");
-    for (const filename of ["WA-01.mp4", "WA-02.mp4", "WA-03.mp4", "WA-03-mobile.mp4"]) {
+    for (const filename of [
+      "pipeline-1080.mp4",
+      "our-approach-1080.mp4",
+      "hero-1080.mp4",
+      "WA-01.mp4",
+      "WA-02.mp4",
+      "WA-03.mp4",
+      "WA-03-mobile.mp4",
+    ]) {
       expect(videoSources).toContain(`"${filename}"`);
     }
+    expect(videoSources).toContain("hero: [LOCAL_VIDEO_SOURCES.heroDesktop, LOCAL_VIDEO_SOURCES.heroMobile]");
+    expect(read("components", "sections", "Hero.tsx")).toContain(
+      'className="absolute inset-0 h-full w-full object-cover object-center"',
+    );
+    expect(read("app", "services", "page.tsx")).toContain("src={VIDEO_SOURCES.heroDesktop}");
     expect(read("components", "sections", "HomeVisualShowcase.tsx")).toContain(
       "https://media.articog.com/images/home/",
     );

@@ -10,6 +10,7 @@ type LazyVideoSource = {
 
 interface LazyVideoProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   sources?: LazyVideoSource[];
+  fallbackSources?: readonly string[];
 }
 
 type SaveDataConnection = EventTarget & {
@@ -47,6 +48,7 @@ export function LazyVideo({
   src,
   preload = "metadata",
   onError,
+  fallbackSources = [],
   ...props
 }: LazyVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -59,6 +61,8 @@ export function LazyVideo({
   const [shouldLoad, setShouldLoad] = useState(false);
   const [hasFailed, setHasFailed] = useState(false);
   const [activeSources, setActiveSources] = useState<LazyVideoSource[]>();
+  const [fallbackSrc, setFallbackSrc] = useState<string>();
+  const fallbackIndexRef = useRef(0);
   const [showPlaybackButton, setShowPlaybackButton] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -177,8 +181,15 @@ export function LazyVideo({
       currentSrc: video.currentSrc,
       networkState: video.networkState,
     });
-    setHasFailed(true);
-    setShowPlaybackButton(true);
+    const nextSource = fallbackSources[fallbackIndexRef.current];
+    if (nextSource) {
+      fallbackIndexRef.current += 1;
+      setFallbackSrc(nextSource);
+      setHasFailed(false);
+    } else {
+      setHasFailed(true);
+      setShowPlaybackButton(true);
+    }
     onError?.(event);
   };
 
@@ -199,7 +210,7 @@ export function LazyVideo({
     setShouldLoad(true);
     setHasFailed(false);
     video.muted = true;
-    const selectedSrc = selectedSources?.[0]?.src ?? src;
+    const selectedSrc = selectedSources?.[0]?.src ?? fallbackSrc ?? src;
     if (typeof selectedSrc === "string") {
       video.src = selectedSrc;
       video.load();
@@ -220,7 +231,7 @@ export function LazyVideo({
         ref={videoRef}
         {...props}
         preload={shouldLoad ? preload : "none"}
-        src={shouldLoad && !hasFailed ? activeSources?.[0]?.src ?? src : undefined}
+        src={shouldLoad && !hasFailed ? fallbackSrc ?? activeSources?.[0]?.src ?? src : undefined}
         onError={handleError}
       />
       {showPlaybackButton || autoplaySkipped ? (

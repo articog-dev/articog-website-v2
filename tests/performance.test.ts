@@ -33,14 +33,14 @@ describe("performance boundaries", () => {
     const gallery = read("components", "sections", "HomeVisualShowcase.tsx");
     const videoSources = read("lib", "video-sources.ts");
 
-    expect(videoSources).toContain('heroMobile: videoUrl("WA-03-mobile.mp4")');
-    expect(videoSources).toContain('heroDesktop: videoUrl("WA-03.mp4")');
+    expect(videoSources).toContain('heroMobile: videoUrl("hero-1080.mp4")');
+    expect(videoSources).toContain('heroDesktop: videoUrl("hero-1080.mp4")');
     expect(hero).toContain("const selectedVideoSrc = isMobileViewport");
     expect(hero).toContain("src={shouldLoadVideoSource ? videoSrc : undefined}");
     expect(hero).not.toContain("<source");
     expect(hero).toContain('window.matchMedia("(max-width: 767px)")');
     expect(hero).toContain("handleVideoError");
-    expect(hero).toContain("LOCAL_VIDEO_SOURCES");
+    expect(hero).toContain("VIDEO_FALLBACK_SOURCES.hero");
     expect(hero).toContain("autoPlay");
     expect(hero).toContain("muted");
     expect(hero).toContain("playsInline");
@@ -52,6 +52,11 @@ describe("performance boundaries", () => {
     expect(hero).toContain('window.matchMedia("(prefers-reduced-motion: reduce)")');
     expect(hero).toContain("connection?.saveData");
     expect(hero).toContain("video.load()");
+    expect(hero).toContain("VIDEO_FALLBACK_SOURCES.hero");
+    expect(hero).not.toContain('filter:');
+    expect(hero).not.toContain('transform:');
+    expect(hero).not.toContain('opacity:');
+    expect(hero).toContain("object-cover");
     expect(gallery).toContain('const CARD_SIZES = "(max-width: 640px) 70vw, min(max(24vw, 13rem), 21rem)"');
     expect(gallery).toContain("quality={90}");
     expect(gallery).toContain('loading={isNearActive ? "eager" : "lazy"}');
@@ -67,7 +72,7 @@ describe("performance boundaries", () => {
 
     expect(pipeline).toContain('{ rootMargin: "300px" }');
     expect(pipeline).toContain("enabled: shouldLoad");
-    expect(videoSources).toContain('pipeline: videoUrl("WA-01.mp4")');
+    expect(videoSources).toContain('pipeline: videoUrl("pipeline-1080.mp4")');
     expect(pipeline).toContain("src={shouldLoad ? VIDEO_SOURCES.pipeline : undefined}");
     expect(pipeline).toContain('preload="metadata"');
     expect(pipeline).toContain('poster="/pipeline-poster.jpg"');
@@ -81,7 +86,9 @@ describe("performance boundaries", () => {
     expect(approach).toContain("enabled: shouldLoad");
     expect(approach).toContain('preload="metadata"');
     expect(approach).toContain("src={shouldLoad ? VIDEO_SOURCES.approach : undefined}");
-    expect(videoSources).toContain('approach: videoUrl("WA-02.mp4")');
+    expect(videoSources).toContain('approach: videoUrl("our-approach-1080.mp4")');
+    expect(pipeline).toContain("VIDEO_FALLBACK_SOURCES.pipeline");
+    expect(approach).toContain("VIDEO_FALLBACK_SOURCES.approach");
     expect(approach).toContain("autoPlay");
     expect(approach).toContain("muted");
     expect(approach).toContain("playsInline");
@@ -96,9 +103,8 @@ describe("performance boundaries", () => {
   it("keeps the services hero responsive and deferred through LazyVideo", () => {
     const services = read("app", "services", "page.tsx");
 
-    expect(services).toContain('media: "(max-width: 767px)"');
-    expect(services).toContain("VIDEO_SOURCES.heroMobile");
-    expect(services).toContain("VIDEO_SOURCES.heroDesktop");
+    expect(services).toContain("src={VIDEO_SOURCES.heroDesktop}");
+    expect(services).toContain("VIDEO_FALLBACK_SOURCES.hero");
     expect(services).toContain('preload="auto"');
     expect(services).toContain("<LazyVideo");
   });

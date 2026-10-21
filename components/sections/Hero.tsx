@@ -4,7 +4,7 @@ import type { HeroContent } from "@/types";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import ReactDOM from "react-dom";
 import { Heading } from "@/components/ui";
-import { LOCAL_VIDEO_SOURCES, VIDEO_SOURCES } from "@/lib/video-sources";
+import { VIDEO_FALLBACK_SOURCES, VIDEO_SOURCES } from "@/lib/video-sources";
 
 interface HeroProps {
   content: HeroContent;
@@ -62,15 +62,6 @@ export function Hero({ content }: HeroProps) {
   const selectedVideoSrc = isMobileViewport
     ? VIDEO_SOURCES.heroMobile
     : VIDEO_SOURCES.heroDesktop;
-  const otherVideoSrc = isMobileViewport
-    ? VIDEO_SOURCES.heroDesktop
-    : VIDEO_SOURCES.heroMobile;
-  const selectedLocalSrc = isMobileViewport
-    ? LOCAL_VIDEO_SOURCES.heroMobile
-    : LOCAL_VIDEO_SOURCES.heroDesktop;
-  const otherLocalSrc = isMobileViewport
-    ? LOCAL_VIDEO_SOURCES.heroDesktop
-    : LOCAL_VIDEO_SOURCES.heroMobile;
   const videoSrc =
     fallbackSrc?.selectedSrc === selectedVideoSrc ? fallbackSrc.src : selectedVideoSrc;
   const shouldLoadVideoSource = shouldLoadVideo || manualPlayback;
@@ -142,7 +133,7 @@ export function Hero({ content }: HeroProps) {
     }
     const failedSources = failedSourcesRef.current.urls;
     failedSources.push(video.currentSrc, videoSrc);
-    const nextSource = [otherVideoSrc, selectedLocalSrc, otherLocalSrc].find((candidate) => {
+    const nextSource = VIDEO_FALLBACK_SOURCES.hero.find((candidate) => {
       const absoluteCandidate = new URL(candidate, window.location.href).href;
       return !failedSources.some(
         (failedSource) =>
@@ -216,15 +207,6 @@ export function Hero({ content }: HeroProps) {
           </button>
         ) : null}
 
-        {/* Light vignette for text readability without washing out the video */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.18) 100%)",
-            backgroundColor: "transparent",
-          }}
-        />
       </div>
 
       {/* Dot grid */}

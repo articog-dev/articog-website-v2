@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { Container, Section, Heading } from "@/components/ui";
 import { ScrollReveal } from "@/components/animations";
 import { useBufferedAutoplay } from "@/hooks/use-buffered-autoplay";
-import { VIDEO_SOURCES } from "@/lib/video-sources";
+import { VIDEO_FALLBACK_SOURCES, VIDEO_SOURCES } from "@/lib/video-sources";
 
 const approachItems = [
   {
@@ -49,6 +49,7 @@ export function OurApproach() {
 
   const { showPlaybackButton, isPlaying, togglePlayback } = useBufferedAutoplay(videoRef, {
     enabled: shouldLoad,
+    fallbackSources: VIDEO_FALLBACK_SOURCES.approach,
   });
 
   return (

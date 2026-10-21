@@ -5,6 +5,7 @@ const STALL_RETRY_MS = 800;
 
 interface Options {
   enabled?: boolean;
+  fallbackSources?: readonly string[];
   keepPlaying?: boolean;
   waitForBuffer?: boolean;
 }
@@ -34,7 +35,12 @@ function subscribeToAutoplayPreference(onChange: () => void) {
 
 export function useBufferedAutoplay(
   videoRef: RefObject<HTMLVideoElement | null>,
-  { enabled = true, keepPlaying = false, waitForBuffer = true }: Options = {},
+  {
+    enabled = true,
+    fallbackSources = [],
+    keepPlaying = false,
+    waitForBuffer = true,
+  }: Options = {},
 ) {
   const autoplayBlocked = useSyncExternalStore(
     subscribeToAutoplayPreference,
@@ -48,6 +54,26 @@ export function useBufferedAutoplay(
     const video = videoRef.current;
     if (!video || !enabled) return;
 
+    let fallbackIndex = 0;
+    const handleError = () => {
+      console.warn("Video source failed", {
+        errorCode: video.error?.code,
+        currentSrc: video.currentSrc,
+        networkState: video.networkState,
+      });
+      const nextSource = fallbackSources[fallbackIndex];
+      if (!nextSource) {
+        setShowPlaybackButton(true);
+        return;
+      }
+
+      fallbackIndex += 1;
+      video.src = nextSource;
+      video.load();
+    };
+    video.addEventListener("error", handleError);
+
+    const clearStallTimer = () => window.clearTimeout(stallTimer);
     const handlePlaying = () => {
       setIsPlaying(true);
       clearStallTimer();
@@ -59,6 +85,7 @@ export function useBufferedAutoplay(
     if (autoplayBlocked) {
       video.pause();
       return () => {
+        video.removeEventListener("error", handleError);
         video.removeEventListener("playing", handlePlaying);
         video.removeEventListener("pause", handlePauseEvent);
       };
@@ -114,8 +141,6 @@ export function useBufferedAutoplay(
       play();
     };
 
-    const clearStallTimer = () => window.clearTimeout(stallTimer);
-
     const handleStall = () => {
       clearStallTimer();
       stallTimer = window.setTimeout(() => {
@@ -169,9 +194,10 @@ export function useBufferedAutoplay(
       video.removeEventListener("stalled", handleStall);
       video.removeEventListener("playing", handlePlaying);
       video.removeEventListener("pause", handlePauseEvent);
+      video.removeEventListener("error", handleError);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [videoRef, enabled, keepPlaying, waitForBuffer, autoplayBlocked]);
+  }, [videoRef, enabled, fallbackSources, keepPlaying, waitForBuffer, autoplayBlocked]);
 
   const togglePlayback = () => {
     const video = videoRef.current;

@@ -14,7 +14,7 @@ import { ArrowRight, Grid2X2, Instagram, Layers3, Smartphone } from "lucide-reac
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { topLevelServiceLinks } from "@/lib/service-navigation";
 import { LazyVideo } from "@/components/ui/LazyVideo";
-import { VIDEO_SOURCES } from "@/lib/video-sources";
+import { VIDEO_FALLBACK_SOURCES, VIDEO_SOURCES } from "@/lib/video-sources";
 
 const serviceDeliverables = [
   {
@@ -340,17 +340,8 @@ export default function ServicesPage() {
         media={
           <>
             <LazyVideo
-              sources={[
-                {
-                  src: VIDEO_SOURCES.heroMobile,
-                  media: "(max-width: 767px)",
-                  type: "video/mp4",
-                },
-                {
-                  src: VIDEO_SOURCES.heroDesktop,
-                  type: "video/mp4",
-                },
-              ]}
+              src={VIDEO_SOURCES.heroDesktop}
+              fallbackSources={VIDEO_FALLBACK_SOURCES.hero}
               poster="/hero-poster.jpg"
               autoPlay
               muted
